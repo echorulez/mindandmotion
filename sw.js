@@ -1,8 +1,8 @@
-const CACHE_NAME = 'brain-booster-v1';
+const CACHE_NAME = 'brain-booster-v2';
 const APP_SHELL = [
   './',
   './index.html',
-  './Brain%20Booster.html',
+  './mindandmotion.html',
   './manifest.webmanifest',
   './icon.svg',
   './icons/icon-192.png',

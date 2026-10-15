@@ -1,0 +1,1372 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#eef2f1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mind &amp; Motion">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Mind &amp; Motion</title>
+  <meta name="description" content="Daha sağlıklı bir zihin için günlük alışkanlıklar.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+</head>
+<body>
+<style>
+/* Layout: sakin bir klinik defter. Üstte sekme şeridi, tek sütun içerik, testler tam ekran "seans odası"nda. */
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --ink:#16232a; --muted:#566870; --line:#d3dcda;
+  --accent:#2c5b86; --accent-ink:#ffffff; --soft:#e2eaf1; --good:#2f7a63; --warn:#9a6a12; --bad:#a9443a;
+  --s-red:#c4382c; --s-blue:#2456c9; --s-green:#23874a; --s-yellow:#a88400;
+  --f-display:"Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-body:"Source Sans 3", "Segoe UI", Roboto, Arial, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1417; --surface:#161f24; --ink:#e3eaec; --muted:#93a4ab; --line:#27343b;
+  --accent:#7fa9d6; --accent-ink:#0e1417; --soft:#1c2a34; --good:#6cbf9f; --warn:#e2ac4f; --bad:#e57a6f;
+  --s-red:#ef6a5e; --s-blue:#6f9cf5; --s-green:#5cc683; --s-yellow:#e8c64a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1417; --surface:#161f24; --ink:#e3eaec; --muted:#93a4ab; --line:#27343b;
+  --accent:#7fa9d6; --accent-ink:#0e1417; --soft:#1c2a34; --good:#6cbf9f; --warn:#e2ac4f; --bad:#e57a6f;
+  --s-red:#ef6a5e; --s-blue:#6f9cf5; --s-green:#5cc683; --s-yellow:#e8c64a; color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body)}
+*{box-sizing:border-box}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:1.9rem;font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.3rem;font-weight:600}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:700;font-size:1.1rem}
+.brand svg{width:28px;height:28px}
+nav{display:flex;gap:4px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}
+nav button{font:600 .92rem var(--f-body);background:none;border:0;color:var(--muted);padding:8px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+nav button[aria-current="true"]{background:var(--ink);color:var(--bg)}
+.nav-ic{display:none}
+@media (max-width:640px){
+  nav{position:fixed;left:0;right:0;bottom:0;z-index:6;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;overflow:visible;
+    background:var(--surface);border-top:1px solid var(--line);
+    padding:6px max(6px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px))}
+  nav button{display:grid;justify-items:center;align-content:center;gap:3px;padding:6px 2px;border-radius:10px;font-size:.72rem;min-height:54px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  nav button span{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  nav button[aria-current="true"]{background:var(--soft);color:var(--accent)}
+  .nav-ic{display:block;width:23px;height:23px}
+  main{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+}
+nav button:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+main{padding-block:28px 64px}
+section.view{display:grid;gap:22px}
+.eyebrow{font:500 .75rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{color:var(--muted);max-width:62ch}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+.btn{font:600 1rem var(--f-body);border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);padding:10px 20px;cursor:pointer;min-height:44px}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.accent{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{background:transparent;color:var(--bad);border-color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:default}
+
+.chip{display:inline-flex;align-items:center;gap:6px;font:500 .78rem var(--f-mono);letter-spacing:.03em;padding:3px 9px;border-radius:999px;background:var(--soft);color:var(--ink);white-space:nowrap}
+.chip.good{color:var(--good)} .chip.warn{color:var(--warn)} .chip.bad{color:var(--bad)}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+
+label.field{display:grid;gap:6px;font-weight:600}
+input[type=number],input[type=text],select,textarea{font:1rem var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+textarea{min-height:110px;resize:vertical}
+
+/* plan list */
+.plan{display:grid;gap:0;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.plan-item{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:16px 18px;border-top:1px solid var(--line)}
+.plan-item:first-child{border-top:0}
+.plan-item .meter{font:500 1.35rem var(--f-mono);font-variant-numeric:tabular-nums;min-width:3.2ch}
+.plan-item .txt{min-width:0}
+@media (max-width:520px){.plan-item{grid-template-columns:1fr;gap:8px}.plan-item .meter{font-size:1.1rem}}
+
+.banner{border-left:4px solid var(--accent);background:var(--soft);padding:14px 16px;border-radius:6px;display:grid;gap:8px}
+.banner.warn{border-color:var(--warn)}
+
+/* checklist */
+.check{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;padding:12px 0;border-top:1px solid var(--line);cursor:pointer}
+.check:first-of-type{border-top:0}
+.check input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--good)}
+.check b{font-weight:600}
+.bar{height:8px;border-radius:4px;background:var(--soft);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--good)}
+.stat{display:grid;gap:6px}
+.stat .v{font:500 1.05rem var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* tables & charts */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:500 .75rem var(--f-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.chart{overflow-x:auto}
+.chart svg{display:block;width:100%;min-width:420px;height:auto}
+.chart text{fill:var(--muted);font:11px var(--f-mono)}
+
+/* evidence */
+.ev{display:grid;gap:8px;padding:16px 0;border-top:1px solid var(--line)}
+.ev:first-child{border-top:0;padding-top:0}
+
+/* runner (seans odası) */
+#runner{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.run-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:12px;border-bottom:1px solid var(--line)}
+#stage{padding-block:28px 40px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px;justify-items:center;text-align:center}
+#stage>*{min-width:0;max-width:100%}
+#runner{overflow-x:hidden}
+#stage .lead{margin:0 auto}
+#stage .panel{text-align:left;width:100%;max-width:620px}
+.big{font:600 clamp(2.4rem,9vw,4rem) var(--f-display);letter-spacing:.02em}
+.timer{font:500 1rem var(--f-mono);color:var(--muted)}
+.keypad{display:grid;grid-template-columns:repeat(3,minmax(64px,88px));gap:10px;justify-content:center}
+.keypad button,.opt{font:600 1.4rem var(--f-mono);min-height:58px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.keypad button:active,.opt:active{background:var(--soft)}
+.symkey{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.symkey div{display:grid;border:1px solid var(--line);border-radius:6px;overflow:hidden;min-width:40px;background:var(--surface)}
+.symkey span{padding:4px 8px;font-size:1.2rem}
+.symkey span+span{border-top:1px solid var(--line);font:500 1rem var(--f-mono)}
+.sym{font-size:4rem;line-height:1}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,200px));gap:12px;justify-content:center;width:100%;max-width:412px}
+.opts.four{grid-template-columns:repeat(2,minmax(0,180px))}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:8px;vertical-align:-1px}
+.field-svg{width:min(92vw,440px);max-width:100%;aspect-ratio:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;touch-action:manipulation}
+.car{fill:var(--ink)} .wheel{fill:var(--muted)} .eye{fill:var(--surface)}
+.feat{fill:none;stroke:var(--surface);stroke-width:3;stroke-linecap:round}
+.tgtg .car,.tgtg .wheel{fill:var(--accent)}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.day{border:1px solid var(--line);border-radius:8px;padding:8px 5px;display:grid;gap:4px;align-content:start;background:var(--surface);min-width:0;text-align:center}
+.day.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.day .dn{font:500 .7rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.day .dd{font-weight:600}
+.dt{font-size:.72rem;line-height:1.25;padding:3px 2px;border-radius:4px;background:var(--soft);overflow-wrap:anywhere}
+.dt.done{background:var(--good);color:var(--bg)}
+.day.past .dt:not(.done){opacity:.55}
+.dt.rest{background:transparent;border:1px dashed var(--line);color:var(--muted)}
+.field-svg .tgt{fill:var(--accent)} .field-svg .dis{fill:var(--muted)}
+.field-svg .mask line{stroke:var(--muted);stroke-width:2}
+.field-svg .slot{fill:var(--soft);stroke:var(--line);cursor:pointer}
+.field-svg .slot:hover{fill:var(--accent);opacity:.5}
+.field-svg .fix{stroke:var(--ink);stroke-width:2}
+.fb-good{color:var(--good)} .fb-bad{color:var(--bad)}
+.series{font:500 clamp(1.4rem,5vw,2rem) var(--f-mono);letter-spacing:.04em;word-spacing:.3em}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:12px;width:100%;max-width:620px}
+.result-grid .panel{gap:4px;padding:14px}
+.result-grid .v{font:500 1.5rem var(--f-mono);font-variant-numeric:tabular-nums}
+.confirm{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.opt.hl,.keypad button.hl{border:2px solid var(--good);box-shadow:0 0 0 3px var(--soft)}
+.symkey div.hl{border-color:var(--good);box-shadow:0 0 0 2px var(--good)}
+.field-svg .slot.hl{fill:var(--good);opacity:.35}
+div.opt{display:grid;place-items:center;cursor:default}
+.ex-note{max-width:620px;width:100%;text-align:left}
+.game-cv{width:min(92vw,440px);max-width:100%;border-radius:14px;border:1px solid var(--line);touch-action:none;display:block;background:var(--soft)}
+.game-btn{min-width:220px;min-height:58px;font-size:1.2rem;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.game-btn{background:var(--surface);color:var(--ink);border:2px solid var(--line);min-width:150px}
+.game-btn.gb-g{border-color:var(--s-green)} .game-btn.gb-r{border-color:var(--s-red)}
+.game-btn.pressed{transform:scale(.95);background:var(--soft)}
+.fig{width:min(62vw,230px);max-width:100%;height:auto;aspect-ratio:1;display:block}
+.fig.small{width:min(40vw,150px);opacity:.75}
+.phase{width:100%;max-width:520px;border-radius:14px;padding:14px 16px;display:grid;gap:4px;justify-items:center}
+.phase.work{background:var(--accent);color:var(--accent-ink)}
+.phase.rest{background:var(--soft);color:var(--ink);border:2px dashed var(--good)}
+.phase .pl{font:600 .78rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.phase .pt{font:700 1.7rem var(--f-display);line-height:1.15;text-wrap:balance}
+.next-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface);width:100%;max-width:520px}
+.next-card .fig{width:84px;opacity:.55}
+.tlabel{font:500 .85rem var(--f-mono);color:var(--muted);margin-top:-14px}
+.tlabel.ready{color:var(--warn);font-weight:700}
+.stars{font-size:2.4rem;letter-spacing:.15em;color:var(--warn)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 17c2-5 5-5 7 0s5 5 7 0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      Mind &amp; Motion
+    </div>
+    <nav id="nav" hidden>
+      <button data-tab="today"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Bugün</span></button>
+      <button data-tab="train"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg><span>Egzersizler</span></button>
+      <button data-tab="life"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg><span>Yaşam</span></button>
+      <button data-tab="progress"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19h16"/><path d="M5 15l4.5-4.5 3.5 3 6-6.5"/></svg><span>İlerleme</span></button>
+      <button data-tab="science"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".9" fill="currentColor"/></svg><span>Bilgi</span></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="app">
+
+  <!-- ONBOARDING -->
+  <section class="view" id="v-onboard" hidden>
+    <div style="display:grid;gap:10px">
+      <span class="eyebrow">Başlangıç</span>
+      <h1>Daha sağlıklı bir zihin için günlük alışkanlıklar</h1>
+      <p class="lead">Mind &amp; Motion, düşünme becerilerini ve beyin sağlığını korumak için araştırmalara dayanan üç yaklaşımı bir araya getirir: 20 yıllık takip çalışmasında en güçlü sonucu veren hız işleme antrenmanı, FINGER ve US POINTER'daki çok alanlı yaşam tarzı programı ve Lancet Komisyonu'nun 14 değiştirilebilir risk faktörü.</p>
+    </div>
+    <form class="panel" id="onboardForm" novalidate>
+      <h2>Sizi tanıyalım</h2>
+      <div class="grid2">
+        <label class="field">Yaşınız
+          <input type="number" id="ob-age" min="18" max="110" placeholder="ör. 58" required>
+        </label>
+        <label class="field">Cinsiyet
+          <select id="ob-sex">
+            <option value="f">Kadın</option>
+            <option value="m">Erkek</option>
+            <option value="x">Belirtmek istemiyorum</option>
+          </select>
+        </label>
+        <label class="field">Eğitim süresi (yıl, isteğe bağlı)
+          <input type="number" id="ob-edu" min="0" max="30" placeholder="ör. 11">
+        </label>
+      </div>
+      <p class="small muted">Yaş, egzersizlerin başlangıç zorluğunu ve size öncelikli risk faktörlerini belirler. Bilgiler yalnızca bu tarayıcıda saklanır.</p>
+      <p class="small fb-bad" id="ob-err" hidden>Lütfen 18 ile 110 arasında bir yaş girin.</p>
+      <div><button class="btn accent" type="submit">Programımı oluştur</button></div>
+    </form>
+    <div class="grid2">
+      <div class="panel"><span class="eyebrow">1 · Ölçüm</span><h3>10 dakikalık bilişsel profil</h3><p class="small muted">Kelime listesi, sembol-sayı eşleme, sayı dizisi ve Stroop. Klinik araştırmalarda kullanılan paradigmaların kısa versiyonları.</p></div>
+      <div class="panel"><span class="eyebrow">2 · Antrenman</span><h3>Haftada 3 hız, 2 akıl yürütme seansı</h3><p class="small muted">Performansınıza göre zorlaşan, 5 dakikalık seanslar.</p></div>
+      <div class="panel"><span class="eyebrow">3 · Yaşam</span><h3>Günlük alışkanlık listesi</h3><p class="small muted">Hareket, beslenme, uyku, sosyal temas ve risk faktörü kontrolleri.</p></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-today" hidden></section>
+  <section class="view" id="v-test" hidden></section>
+  <section class="view" id="v-train" hidden></section>
+  <section class="view" id="v-life" hidden></section>
+  <section class="view" id="v-progress" hidden></section>
+
+  <!-- SCIENCE (static) -->
+  <section class="view" id="v-science" hidden>
+    <div style="display:grid;gap:10px">
+      <span class="eyebrow">Bilgi</span>
+      <h1>Mind &amp; Motion ne yapar?</h1>
+      <p class="lead">Mind &amp; Motion, düşünme becerilerini ve beyin sağlığını yaş ilerledikçe korumaya yönelik bir günlük programdır. Tek bir "beyin oyunu" yerine, araştırmalarda etkisi gösterilmiş üç yaklaşımı birleştirir: bilişsel antrenman, fiziksel hareket ve değiştirilebilir risk faktörlerinin takibi.</p>
+    </div>
+    <div class="panel">
+      <h2>Amaç</h2>
+      <ul style="margin:0;padding-left:18px;display:grid;gap:6px">
+        <li><b>İşlem hızını ve dikkati korumak.</b> Uzun dönem takipte en güçlü sonucu veren bilişsel antrenman türü hız antrenmanıdır; programın merkezinde o var.</li>
+        <li><b>Günlük hayatta kullanılan becerileri güçlendirmek:</b> hatırlama stratejileri, akıl yürütme, aynı anda birden fazla işi yönetme.</li>
+        <li><b>Beyni dolaylı koruyan alışkanlıkları kalıcı hale getirmek:</b> düzenli hareket, beslenme, uyku, sosyal temas.</li>
+        <li><b>Değişimi görünür kılmak.</b> Düzenli ölçümle kendi gidişatınızı izler, bir şey değişirse erkenden fark edersiniz.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h2>Bölümler</h2>
+      <div class="tbl"><table><tbody>
+        <tr><td><b>Bugün</b></td><td style="white-space:normal">Günün egzersizleri, haftalık takvim ve yaşınıza ve cinsiyetinize göre öncelikler.</td></tr>
+        <tr><td><b>Egzersizler</b></td><td style="white-space:normal">Beş egzersiz. <b>Çift Odak</b>: hız ve görsel dikkat (birincil). <b>Hafıza Sarayı</b>: bellek stratejileri. <b>Dizi Bulmaca</b>: akıl yürütme. <b>Yol Ustası</b>: çoklu görev oyunu. <b>Hareket rutini</b>: kuvvet ve denge.</td></tr>
+        <tr><td><b>Yaşam</b></td><td style="white-space:normal">8 maddelik günlük alışkanlık listesi, haftalık hedefler ve Lancet Komisyonu'nun 14 risk faktörü için kontrol listesi.</td></tr>
+        <tr><td><b>İlerleme</b></td><td style="white-space:normal">10 dakikalık bilişsel ölçüm (üç ayda bir) ve tüm egzersizlerin geçmişi.</td></tr>
+        <tr><td><b>Bilgi</b></td><td style="white-space:normal">Bu sayfa: her bileşenin dayandığı araştırma ve kanıt düzeyi.</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="panel">
+      <h2>Önerilen düzen</h2>
+      <p>Günde 5-15 dakika ekran egzersizi ve her gün yaşam listesi. Haftalık hedef: 3 hız, 3 hareket, 2 bellek, 2 akıl yürütme ve 2 oyun seansı. Pazar ekransız sosyal gündür. Egzersizler başarınıza göre kendiliğinden zorlaşır veya kolaylaşır, böylece her zaman zorlayıcı ama yapılabilir seviyede kalır.</p>
+      <p class="small muted">En fazla fayda düzenlilikten gelir. Araştırmalarda etki, haftalarca süren düzenli katılım ve sonrasında sürdürülen takviye seanslarıyla görüldü.</p>
+    </div>
+    <div class="panel">
+      <h2>Ne yapmaz?</h2>
+      <p>Mind &amp; Motion tanı koymaz, tedavi yerine geçmez ve herhangi bir hastalığı önleyeceğini vaat etmez. Hiçbir uygulama bunu vaat edemez. Hedefi, beyin sağlığını destekleyen davranışları düzenli ve ölçülebilir hale getirmektir.</p>
+    </div>
+    <div style="display:grid;gap:10px;margin-top:8px">
+      <span class="eyebrow">Bilimsel temel</span>
+      <h2 style="font-size:1.6rem">Neyin işe yaradığı, ne kadar emin olduğumuz</h2>
+      <p class="lead">Her bileşeni kanıt düzeyiyle birlikte gösteriyoruz. "Beyin oyunu" pazarında iddialar çoğu zaman kanıtın önüne geçer; burada yalnızca randomize kontrollü çalışmalara ve sağlık otoritelerinin kılavuzlarına dayanan unsurlar var.</p>
+    </div>
+    <div class="panel">
+      <div class="ev">
+        <div class="row"><h3>Hız işleme antrenmanı</h3><span class="chip good"><span class="dot"></span>RKÇ · 20 yıl takip</span></div>
+        <p>ACTIVE çalışmasında 2.832 yaşlı yetişkin hafıza, akıl yürütme veya hız antrenmanına ya da kontrol grubuna ayrıldı. Hız antrenmanı alıp 1. ve 3. yılda takviye (booster) seanslarına katılanlarda 20 yıl içinde Alzheimer ve ilişkili demans tanısı yaklaşık %25 daha az görüldü (%40'a karşı %49). Hafıza ve akıl yürütme antrenmanları demans riskini anlamlı düşürmedi.</p>
+        <p class="small muted">Bu uygulamadaki "Çift Odak" egzersizi aynı paradigmayı (Faydalı Görüş Alanı / UFOV) izler: merkezde bir nesne, çevrede bir hedef, giderek kısalan gösterim süresi. Sınırlılık: sonuç tek bir çalışmaya ve kayıt temelli tanılara dayanıyor.</p>
+      </div>
+      <div class="ev">
+        <div class="row"><h3>Çok alanlı yaşam tarzı programı</h3><span class="chip good"><span class="dot"></span>RKÇ · FINGER, US POINTER</span></div>
+        <p>US POINTER (JAMA, Temmuz 2025) risk altındaki 2.111 yaşlı yetişkinde fiziksel aktivite, beslenme, bilişsel ve sosyal uyarım ile sağlık takibini birleştiren iki programı test etti. Her ikisi de bilişi iyileştirdi; daha yapılandırılmış ve takipli program daha büyük kazanç sağladı. Bu uygulamadaki günlük liste ve haftalık hedefler bu "yapı ve hesap verebilirlik" fikrine dayanır.</p>
+        <p class="small muted">Sınırlılık: biliş üzerindeki etki gösterildi; demans tanısını azalttığına dair uzun dönem sonuç henüz yok.</p>
+      </div>
+      <div class="ev">
+        <div class="row"><h3>14 değiştirilebilir risk faktörü</h3><span class="chip"><span class="dot"></span>Lancet Komisyonu 2024</span></div>
+        <p>Komisyon, düşük eğitim, işitme kaybı, yüksek LDL kolesterol, depresyon, kafa travması, hareketsizlik, diyabet, sigara, hipertansiyon, obezite, aşırı alkol, sosyal izolasyon, hava kirliliği ve görme kaybını sayar. Hepsinin ortadan kaldırılması durumunda demans vakalarının yaklaşık %45'inin önlenebileceği ya da geciktirilebileceği hesaplanmıştır.</p>
+        <p class="small muted">Alzheimer hastalarının yaklaşık üçte ikisi kadındır; bu fark kısmen kadınların daha uzun yaşamasıyla açıklanır. Menopoz döneminde kardiyometabolik değişimlerin takibi bu yüzden önemlidir.</p>
+        <p class="small muted">Sınırlılık: %45 teorik bir üst sınırdır; risk faktörlerinin nedensel olduğu ve tamamen giderilebileceği varsayımına dayanır.</p>
+      </div>
+      <div class="ev">
+        <div class="row"><h3>Akıl yürütme antrenmanı</h3><span class="chip warn"><span class="dot"></span>Orta · bilişsel fayda</span></div>
+        <p>ACTIVE'deki akıl yürütme antrenmanı (sayı ve harf dizilerindeki örüntüyü bulma) çalışılan becerideki iyileşmeyi 10 yıl korudu, ancak demans riskini anlamlı azaltmadı. Programda ikincil egzersiz olarak yer alıyor.</p>
+      </div>
+      <div class="ev">
+        <div class="row"><h3>Bellek stratejisi antrenmanı</h3><span class="chip warn"><span class="dot"></span>Orta · bellek performansı</span></div>
+        <p>ACTIVE'nin bellek kolu yer yöntemi, gruplama ve imgeleme gibi stratejileri öğretti. Bellek testlerinde iyileşme sağladı, ancak 20 yılda demans riskini anlamlı azaltmadı. Hafıza Sarayı egzersizi bu yaklaşımı izler; günlük hatırlama için pratik fayda sunar.</p>
+      </div>
+      <div class="ev">
+        <div class="row"><h3>Çoklu görev oyunu</h3><span class="chip warn"><span class="dot"></span>Küçük RKÇ · Nature 2013</span></div>
+        <p>NeuroRacer çalışmasında 60-85 yaş arası katılımcılar bir ay boyunca toplam 12 saat, araba sürerken tabelalara tepki verilen bir oyun oynadı. Çoklu görev performansları, oyunu ilk kez oynayan yirmili yaşlardakileri geçti. Kazanım 6 ay sonra korunuyordu ve oyunda çalışılmayan çalışma belleği ile sürdürülebilir dikkat testlerine de yansıdı. Yol Ustası aynı görev yapısını izler.</p>
+        <p class="small muted">Sınırlılık: örneklem küçüktü ve demans riskine etkisi incelenmedi. Programda motivasyonu artıran destekleyici bir egzersiz olarak yer alıyor.</p>
+      </div>
+      <div class="ev">
+        <div class="row"><h3>Fiziksel aktivite, kuvvet ve denge</h3><span class="chip good"><span class="dot"></span>DSÖ önerisi</span></div>
+        <p>DSÖ 2019 kılavuzu, bilişsel gerileme riskini azaltmak için bilişi normal yetişkinlere fiziksel aktiviteyi önerir. Lancet Komisyonu hareketsizliği orta yaşın risk faktörleri arasında sayar. Kuvvet ve denge çalışması ayrıca düşmeleri azaltır; düşmeye bağlı kafa travması da ayrı bir risk faktörüdür.</p>
+      </div>
+      <div class="ev">
+        <div class="row"><h3>Önerilmeyenler</h3><span class="chip bad"><span class="dot"></span>DSÖ 2019 kılavuzu</span></div>
+        <p>Dünya Sağlık Örgütü'nün bilişsel gerileme ve demans riskini azaltma kılavuzu, bu amaçla B ve E vitamini, omega-3 ya da çoklu vitamin takviyelerini önermez. Fiziksel aktiviteyi ise bilişi normal yetişkinlere açıkça önerir.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Önemli not</h2>
+      <p>Mind &amp; Motion tanı aracı değildir. Ölçüm sonuçları yorgunluk, uyku, kaygı ve dikkat dağınıklığından etkilenir ve yalnızca kendi gelişiminizi izlemek içindir. Günlük yaşamı etkileyen unutkanlık, yön bulmada zorlanma, kişilik değişikliği gibi belirtileri siz ya da yakınlarınız fark ediyorsa bir nöroloji veya geriatri uzmanına başvurun. Türkiye'de randevu için MHRS (Alo 182) kullanılabilir.</p>
+    </div>
+    <div class="panel">
+      <h2>Kaynaklar</h2>
+      <ul class="small" style="margin:0;padding-left:18px;display:grid;gap:6px">
+        <li><a href="https://www.medlink.com/news/cognitive-speed-training-linked-to-lower-dementia-incidence-up-to-20-years-later" target="_blank" rel="noopener">ACTIVE 20 yıllık takip (Alzheimer's & Dementia: TRCI, 2026), MedLink özeti</a></li>
+        <li><a href="https://www.uab.edu/news/research-innovation/study-shows-brain-training-can-reduce-alzheimers-and-dementia-risk-by-25-percent" target="_blank" rel="noopener">UAB: hız antrenmanı ve %25 düşük risk</a></li>
+        <li><a href="https://alz.org/us-pointer/study-results" target="_blank" rel="noopener">US POINTER sonuçları, Alzheimer's Association</a></li>
+        <li><a href="https://www.alzheimer-europe.org/news/2024-lancet-commission-underscores-potential-dementia-risk-reduction-identifying-14-modifiable" target="_blank" rel="noopener">Lancet Komisyonu 2024, Alzheimer Europe özeti</a></li>
+        <li><a href="https://www.ucsf.edu/news/2013/09/108616/training-older-brain-3-d-video-game-enhances-cognitive-control" target="_blank" rel="noopener">UCSF: NeuroRacer çalışması (Nature, 2013)</a></li>
+        <li><a href="https://www.who.int/publications/i/item/9789241550543" target="_blank" rel="noopener">DSÖ: Bilişsel gerileme ve demans riskini azaltma kılavuzu (2019)</a></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<div id="runner" hidden>
+  <div class="wrap">
+    <div class="run-head"><span class="eyebrow" id="run-title">Seans</span><button class="btn ghost" id="run-close" type="button">Çık</button></div>
+    <div id="stage" aria-live="polite"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- state ---------- */
+const KEY='brain-booster-v1';
+const blank=()=>({profile:null,assessments:[],sessions:[],speedDur:null,reasonLevel:1,habits:{},risk:{}});
+let S; try{S=JSON.parse(localStorage.getItem(KEY))||blank()}catch(e){S=blank()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const $=s=>document.querySelector(s);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function localDate(d=new Date()){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return localDate(d)}
+function fmtDate(iso){return new Date(iso+'T12:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'})}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+/* ---------- navigation ---------- */
+let tab='today';
+function go(t){tab=t;try{sessionStorage.setItem('bb-tab',t)}catch(e){}render();window.scrollTo(0,0)}
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(b)go(b.dataset.tab)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){go(b.dataset.go)}
+  const a=e.target.closest('[data-act]');if(a){ACTIONS[a.dataset.act]()}});
+
+function render(){
+  const has=!!S.profile;
+  $('#nav').hidden=!has;
+  document.querySelectorAll('section.view').forEach(s=>s.hidden=true);
+  if(!has){$('#v-onboard').hidden=false;return}
+  document.querySelectorAll('#nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===tab||(tab==='test'&&b.dataset.tab==='progress')));
+  const v=$('#v-'+tab);v.hidden=false;
+  ({today:renderToday,test:renderTest,train:renderTrain,life:renderLife,progress:renderProgress,science:()=>{}})[tab]();
+}
+
+/* ---------- onboarding ---------- */
+$('#onboardForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const age=parseInt($('#ob-age').value,10);
+  if(!(age>=18&&age<=110)){$('#ob-err').hidden=false;return}
+  const edu=parseInt($('#ob-edu').value,10);
+  S.profile={age,sex:$('#ob-sex').value,edu:isNaN(edu)?null:edu,created:localDate()};
+  if(S.profile.edu!==null&&S.profile.edu<12)S.risk.edu=true;
+  S.speedDur=startDur(age);save();go('test');
+});
+function startDur(age){return age<40?150:age<60?220:age<75?320:450}
+
+/* ---------- helpers on data ---------- */
+const sessionsSince=(type,days)=>S.sessions.filter(s=>s.type===type&&s.date>=daysAgo(days-1));
+const lastAssess=()=>S.assessments[S.assessments.length-1];
+function streak(){let n=0;for(let i=0;i<400;i++){const d=daysAgo(i);const act=S.sessions.some(s=>s.date===d)||Object.values(S.habits[d]||{}).some(v=>v===true||v>0);if(act)n++;else if(i>0)break}return n}
+
+/* ---------- risk factors (Lancet 2024) ---------- */
+const RISKS=[
+ {k:'edu',stage:'Erken yaşam',t:'Düşük eğitim düzeyi',a:'Her yaşta yeni bir dil, enstrüman veya kurs gibi zihinsel olarak zorlayıcı öğrenme etkinlikleri edinin.'},
+ {k:'hear',stage:'Orta yaş',t:'İşitme kaybı',a:'İşitme testi yaptırın; gerekiyorsa işitme cihazı kullanın ve gürültüden korunun.'},
+ {k:'ldl',stage:'Orta yaş',t:'Yüksek LDL kolesterol',a:'40 yaşından itibaren LDL ölçtürün; yüksekse doktorunuzla tedavi planı yapın.'},
+ {k:'dep',stage:'Orta yaş',t:'Depresyon',a:'Belirtiler iki haftadan uzun sürüyorsa bir ruh sağlığı uzmanına başvurun; depresyon tedavi edilebilir.'},
+ {k:'tbi',stage:'Orta yaş',t:'Kafa travması',a:'Bisiklette kask, araçta emniyet kemeri; evde düşmeye karşı önlem alın.'},
+ {k:'inact',stage:'Orta yaş',t:'Fiziksel hareketsizlik',a:'Haftada en az 150 dakika orta yoğunlukta aerobik egzersiz hedefleyin.'},
+ {k:'dm',stage:'Orta yaş',t:'Diyabet',a:'Kan şekerini düzenli kontrol ettirin ve tedavinize uyun.'},
+ {k:'smoke',stage:'Orta yaş',t:'Sigara',a:'Bırakmanın faydası her yaşta görülür. ALO 171 Sigara Bırakma Danışma Hattı destek sunar.'},
+ {k:'htn',stage:'Orta yaş',t:'Yüksek tansiyon',a:'40 yaşından itibaren sistolik tansiyonu 130 mmHg ve altında tutmayı hedefleyin.'},
+ {k:'obes',stage:'Orta yaş',t:'Obezite',a:'Bel çevresi ve kiloyu hareket ve beslenme ile kademeli olarak azaltın.'},
+ {k:'alc',stage:'Orta yaş',t:'Aşırı alkol',a:'Haftalık alkol tüketimini en aza indirin, mümkünse bırakın.'},
+ {k:'iso',stage:'Geç yaşam',t:'Sosyal izolasyon',a:'Haftada birkaç kez yüz yüze görüşme, gönüllülük veya grup etkinliği planlayın.'},
+ {k:'air',stage:'Geç yaşam',t:'Hava kirliliği',a:'Yoğun trafikli saatlerde dışarıda egzersizden kaçının; kapalı alanda soba dumanını azaltın.'},
+ {k:'vis',stage:'Geç yaşam',t:'Görme kaybı',a:'Yılda bir göz muayenesi; katarakt varsa tedavi ettirin.'}
+];
+
+/* ---------- daily habits (POINTER/FINGER/WHO) ---------- */
+const HABITS=[
+ {k:'aero',t:'Aerobik hareket',d:'Tempolu yürüyüş, bisiklet, yüzme. Haftalık hedef 150 dakika.',min:true},
+ {k:'str',t:'Kuvvet veya denge çalışması',d:'Direnç bandı, ağırlık, tek ayak denge. Haftada en az 2 gün.'},
+ {k:'veg',t:'Yeşil yapraklı sebze ve baklagil',d:'MIND/Akdeniz tipi beslenme: ıspanak, roka, mercimek, nohut.'},
+ {k:'nut',t:'Kuruyemiş, zeytinyağı, balık veya tam tahıl',d:'Haftada en az bir kez balık; işlenmiş et ve şekeri sınırlayın.'},
+ {k:'soc',t:'Anlamlı bir sosyal temas',d:'Yüz yüze ya da sesli görüşme, birlikte yapılan bir etkinlik.'},
+ {k:'learn',t:'Yeni bir şey öğrenmek',d:'Okuma, dil, enstrüman veya beceri. Alışık olduğunuz bulmacalar daha az zorlar.'},
+ {k:'sleep',t:'7-8 saat uyku',d:'Düzenli yatış saati; horlama veya nefes durması varsa doktora danışın.'},
+ {k:'clean',t:'Sigara yok, alkol yok veya çok az',d:''}
+];
+function habitDay(d=localDate()){return S.habits[d]||(S.habits[d]={})}
+
+/* ---------- personal focus ---------- */
+function focusList(){
+  const {age,sex}=S.profile;const f=[];
+  if(age<45)f.push('Orta yaş öncesi en etkili dönem: tansiyon, kolesterol ve kilonuzu şimdi kontrol altına almak 20-30 yıl sonrasını belirler.');
+  else if(age<65)f.push('Orta yaş risklerinin ağırlıkta olduğu dönemdesiniz: işitme kaybı ve yüksek LDL kolesterol Lancet 2024 raporunda en büyük paya sahip iki faktör.');
+  else f.push('65 yaş üstünde sosyal izolasyon, görme kaybı ve düşmeye bağlı kafa travması öne çıkar. Denge çalışmaları ve yıllık göz/işitme kontrolü öncelikli.');
+  if(age>=60)f.push('Hız antrenmanı ACTIVE çalışmasında 65 yaş üstünde test edildi; haftada 3 seansı ilk 5-6 hafta düzenli yapmak ve ardından takviye seansları sürdürmek önemli.');
+  else f.push('Hız antrenmanının uzun dönem kanıtı 65 yaş üstünden geliyor; sizin yaşınızda asıl kaldıraç yaşam tarzı ve risk faktörü kontrolü.');
+  if(sex==='f')f.push('Menopoz dönemi uyku, tansiyon ve kolesterolde değişimlere yol açabilir; bunlar beyin sağlığını da etkiler. Bu dönemde değerlerinizi doktorunuzla düzenli takip edin.');
+  if(sex==='m')f.push('Erkeklerde sigara, alkol ve kafa travması ortalamada daha sık; bu üç faktör sizin için en hızlı kazanım alanı olabilir.');
+  return f;
+}
+
+/* ---------- TODAY ---------- */
+const TASKS={
+  speed:{t:'Çift Odak',s:'Hız',d:'Hız antrenmanı · 5 dk',goal:3,min:5},
+  reason:{t:'Dizi Bulmaca',s:'Dizi',d:'Akıl yürütme · 4 dk',goal:2,min:4},
+  memory:{t:'Hafıza Sarayı',s:'Bellek',d:'Bellek stratejisi · 6 dk',goal:2,min:6},
+  move:{t:'Hareket rutini',s:'Hareket',d:'Kuvvet ve denge · 10 dk',goal:3,min:10},
+  game:{t:'Yol Ustası',s:'Oyun',d:'Çoklu görev oyunu · 3 dk',goal:2,min:3}};
+const WEEK=[['speed','move'],['reason','memory'],['speed','move'],['memory','game'],['speed','move'],['reason','game'],[]];
+const DAYN=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+function weekDates(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return[...Array(7)].map((_,i)=>{const x=new Date(d);x.setDate(d.getDate()+i);return localDate(x)})}
+const doneOn=(k,d)=>S.sessions.some(s=>s.type===k&&s.date===d);
+const weekCount=k=>S.sessions.filter(s=>s.type===k&&s.date>=weekDates()[0]).length;
+const nextVariant=()=>S.sessions.filter(s=>s.type==='speed').length%2?'yuz':'arac';
+
+function renderToday(){
+  const p=S.profile,la=lastAssess(),td=localDate(),di=(new Date().getDay()+6)%7,dates=weekDates(),todays=WEEK[di];
+  const hd=habitDay();const hdone=HABITS.filter(h=>h.min?(hd[h.k]||0)>0:hd[h.k]).length;
+  const todayStr=new Date().toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
+  let banner='';
+  if(!la)banner=`<div class="banner"><h3>Önce başlangıç ölçümünü yapın</h3><p class="small">Yaklaşık 10 dakika sürer ve sonraki ölçümler için referans noktanız olur.</p><div><button class="btn accent" data-go="test">Ölçüme git</button></div></div>`;
+  else if(la.date<daysAgo(90))banner=`<div class="banner warn"><h3>Üç aylık ölçüm zamanı</h3><p class="small">Son ölçümünüz ${fmtDate(la.date)}. Değişimi görmek için tekrarlayın.</p><div><button class="btn" data-go="test">Ölçüme git</button></div></div>`;
+  const order=[...todays,...Object.keys(TASKS).filter(k=>!todays.includes(k))];
+  const item=k=>{const T=TASKS[k],n=weekCount(k),isT=todays.includes(k),done=doneOn(k,td);
+    return`<div class="plan-item"><div class="meter ${n>=T.goal?'fb-good':''}">${n}/${T.goal}</div><div class="txt"><div class="row" style="gap:8px"><h3>${T.t}</h3>${isT?(done?'<span class="chip good"><span class="dot"></span>Bugün tamam</span>':'<span class="chip"><span class="dot"></span>Bugün sırada</span>'):''}</div><p class="small muted">${T.d} · haftalık hedef ${T.goal} seans</p></div><div><button class="btn ${isT&&!done?'accent':'ghost'}" data-act="${k}">${done?'Tekrar yap':'Başla'}</button></div></div>`};
+  const mins=todays.reduce((a,k)=>a+TASKS[k].min,0);
+  const strip=dates.map((d,i)=>`<div class="day ${d===td?'today':''} ${d<td?'past':''}"><span class="dn">${DAYN[i]}</span><span class="dd mono">${+d.slice(8)}</span>${WEEK[i].length?WEEK[i].map(k=>`<span class="dt ${doneOn(k,d)?'done':''}">${TASKS[k].s}</span>`).join(''):'<span class="dt rest">Sosyal gün</span>'}</div>`).join('');
+  $('#v-today').innerHTML=`
+    <div style="display:grid;gap:8px"><span class="eyebrow">${esc(todayStr)} · ${p.age} yaş</span><h1>Bugünkü programınız</h1>
+    <p class="lead">${todays.length?`Bugün ${todays.map(k=>TASKS[k].t).join(' ve ')}, yaklaşık ${mins} dakika.`:'Bugün ekran egzersizi yok. Birisiyle yürüyüşe çıkın, bir aile ziyareti ya da grup etkinliği yapın.'} Seri: <span class="mono">${streak()}</span> gün.</p></div>
+    ${banner}
+    <div class="plan">${order.map(item).join('')}
+      <div class="plan-item"><div class="meter ${hdone>=HABITS.length?'fb-good':''}">${hdone}/${HABITS.length}</div><div class="txt"><h3>Yaşam listesi</h3><p class="small muted">Her gün · bugün işaretlenen alışkanlıklar</p></div><div><button class="btn ghost" data-act="life">Aç</button></div></div>
+    </div>
+    <div class="panel"><div class="row" style="justify-content:space-between"><h2>Bu hafta</h2><span class="small muted">Yeşil: tamamlandı</span></div>
+      <div class="week">${strip}</div>
+      <p class="small muted">Haftada 3 hız, 2 akıl yürütme, 2 bellek, 2 oyun ve 3 hareket seansı; günde 5-15 dakika. Kaçırdığınız bir seansı başka bir gün yapabilirsiniz, haftalık sayaç yine işler.</p></div>
+    <div class="panel"><span class="eyebrow">Size özel öncelikler</span>
+      <ul style="margin:0;padding-left:18px;display:grid;gap:8px">${focusList().map(x=>`<li>${x}</li>`).join('')}</ul>
+    </div>`;
+}
+const ACTIONS={
+  speed:()=>runSafe('Çift Odak',()=>speedSession(nextVariant())),
+  speedA:()=>runSafe('Çift Odak',()=>speedSession('arac')),
+  speedB:()=>runSafe('Çift Odak',()=>speedSession('yuz')),
+  reason:()=>runSafe('Dizi Bulmaca',reasonSession),
+  memory:()=>runSafe('Hafıza Sarayı',memorySession),
+  move:()=>runSafe('Hareket rutini',moveSession),
+  game:()=>runSafe('Yol Ustası',gameSession),
+  life:()=>go('life'),assess:()=>runSafe('Bilişsel ölçüm',runAssessment)};
+
+/* ---------- runner infrastructure ---------- */
+let ABORT=false;const stage=()=>$('#stage');
+function chk(){if(ABORT)throw new Error('abort')}
+async function runSafe(title,fn){
+  ABORT=false;$('#run-title').textContent=title;$('#runner').hidden=false;document.body.style.overflow='hidden';
+  try{await fn()}catch(e){if(e.message!=='abort')console.error(e)}
+  closeRunner();
+}
+function closeRunner(){$('#runner').hidden=true;document.body.style.overflow='';render()}
+$('#run-close').addEventListener('click',()=>{ABORT=true;closeRunner()});
+function screen(html,btn='Devam'){return new Promise(res=>{chk();stage().innerHTML=html+`<div><button class="btn accent" id="nx">${btn}</button></div>`;$('#nx').focus();$('#nx').onclick=()=>res()})}
+async function intro(html,btn,demo){
+  for(;;){chk();
+    const c=await new Promise(r=>{stage().innerHTML=html+`<div class="row" style="justify-content:center"><button class="btn ghost" id="ex">Örneği gör</button><button class="btn accent" id="nx">${btn}</button></div>`;$('#nx').focus();$('#ex').onclick=()=>r('ex');$('#nx').onclick=()=>r('go')});
+    if(c==='go')return;await demo();
+  }
+}
+const EX='<span class="chip warn"><span class="dot"></span>Örnek · puanlanmaz</span>';
+async function demoLoop(play){
+  for(;;){chk();await play();chk();
+    const c=await new Promise(r=>{const d=document.createElement('div');d.className='row';d.style.justifyContent='center';
+      d.innerHTML='<button class="btn ghost" id="ag">Tekrar göster</button><button class="btn" id="ok">Anladım</button>';stage().appendChild(d);$('#ok').focus();$('#ag').onclick=()=>r(0);$('#ok').onclick=()=>r(1)});
+    if(c)return;
+  }
+}
+function waitMs(ms){return new Promise(res=>{const t0=performance.now();function f(t){if(t-t0>=ms-6)res();else requestAnimationFrame(f)}requestAnimationFrame(f)})}
+
+/* ---------- ASSESSMENT ---------- */
+/* Ölçüm kelimeleri: 10 grup × 8 kelime. Her liste her gruptan bir kelime alır; listeler sırayla kullanılır.
+   Hafıza Sarayı havuzu ve örnek ekranlardaki kelimelerle çakışma yoktur. */
+const WORD_GROUPS=[
+  ['elma','limon','havuç','domates','kabak','soğan','patates','biber'],          // meyve-sebze
+  ['tavşan','köpek','inek','horoz','kurbağa','sincap','ördek','koyun'],          // hayvan
+  ['ayna','halı','perde','dolap','lamba','yorgan','koltuk','sepet'],             // ev eşyası
+  ['bıçak','tencere','kaşık','tabak','çaydanlık','bardak','tava','süzgeç'],      // mutfak
+  ['kibrit','çekiç','iğne','düğme','fener','kilit','zincir','çivi'],             // küçük eşya
+  ['kapı','pencere','merdiven','duvar','çatı','köprü','kule','baca'],            // yapı
+  ['nehir','kuyu','çeşme','tarla','bahçe','sokak','liman','vadi'],               // yer
+  ['bulut','yıldız','güneş','şimşek','rüzgâr','yağmur','fırtına','duman'],       // gökyüzü
+  ['keman','davul','gitar','piyano','kaval','zurna','düdük','trompet'],          // müzik aleti
+  ['mektup','defter','kitap','gazete','dosya','silgi','cetvel','harita']];       // kırtasiye
+const LIST_NAMES='ABCDEFGH';
+const LIST_A_ORDER=[0,5,6,3,7,8,1,9,4,2];   // Liste A önceki sürümle aynı sırada kalır
+function wordList(i){
+  const order=i===0?LIST_A_ORDER:[...Array(10)].map((_,k)=>(k*3+i)%10);
+  return order.map(g=>WORD_GROUPS[g][i]);
+}
+const nextListIndex=()=>{const la=S.assessments[S.assessments.length-1];return la?(((la.list??0)+1)%8):0};
+let CUR_WORDS=wordList(0);
+const norm=s=>s.toLocaleLowerCase('tr').trim().replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u');
+
+async function recall(prompt){
+  return new Promise(res=>{chk();
+    stage().innerHTML=`<h2>${prompt}</h2><p class="lead">Aklınıza gelen kelimeleri sırası önemli olmadan, virgül veya boşlukla ayırarak yazın.</p>
+    <div class="panel"><label class="field" for="rc">Kelimeler<textarea id="rc" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea></label></div>
+    <div><button class="btn accent" id="nx">Bitirdim</button></div>`;
+    $('#rc').focus();
+    $('#nx').onclick=()=>{const got=new Set($('#rc').value.split(/[\s,;.]+/).map(norm).filter(Boolean));res(CUR_WORDS.filter(w=>got.has(norm(w))).length)};
+  });
+}
+
+async function sdmt(){
+  const SYMS=['▲','●','■','★','✚','◆','▼','◐','☰'];
+  const key=shuffle(SYMS.slice());
+  await intro(`<h2>Sembol-Sayı Eşleme</h2><p class="lead">Üstteki anahtarda her sembolün bir sayısı var. Ortada beliren sembolün sayısına olabildiğince hızlı ve doğru basın. Süre 60 saniye.</p>`,'Başla',demoSDMT);
+  return new Promise(res=>{
+    let cur,correct=0,errors=0;const end=performance.now()+60000;
+    stage().innerHTML=`<div class="symkey">${key.map((s,i)=>`<div><span>${s}</span><span>${i+1}</span></div>`).join('')}</div>
+      <div class="timer mono" id="tm">60 sn</div><div class="sym" id="sy"></div>
+      <div class="keypad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-n="${n}">${n}</button>`).join('')}</div>`;
+    const next=()=>{let n;do{n=rnd(0,8)}while(n===cur);cur=n;$('#sy').textContent=key[cur]};next();
+    const press=n=>{if(n===cur+1)correct++;else errors++;next()};
+    stage().querySelector('.keypad').onclick=e=>{const b=e.target.closest('button');if(b)press(+b.dataset.n)};
+    const kh=e=>{if(/^[1-9]$/.test(e.key))press(+e.key)};document.addEventListener('keydown',kh);
+    const iv=setInterval(()=>{const left=Math.ceil((end-performance.now())/1000);
+      if(ABORT||left<=0){clearInterval(iv);document.removeEventListener('keydown',kh);res({correct,errors});return}
+      $('#tm').textContent=left+' sn'},200);
+  });
+}
+
+async function digitSpan(back){
+  await intro(`<h2>Sayı Dizisi · ${back?'geriye':'ileriye'} doğru</h2><p class="lead">Sayılar tek tek gösterilecek. Bittiğinde ${back?'<b>ters sırayla</b>':'aynı sırayla'} yazın. Her uzunlukta iki şansınız var.</p>`,'Başla',()=>demoSpan(back));
+  let len=back?2:3,best=0;
+  while(len<=9){let ok=false;
+    for(let t=0;t<2&&!ok;t++){chk();
+      const ds=[];while(ds.length<len){const d=rnd(1,9);if(d!==ds[ds.length-1])ds.push(d)}
+      stage().innerHTML=`<p class="eyebrow">${len} hane</p><div class="big mono" id="dg" style="min-height:1.3em"></div>`;
+      await sleep(600);
+      for(const d of ds){chk();$('#dg').textContent=d;await sleep(900);$('#dg').textContent='';await sleep(200)}
+      const ans=await new Promise(r=>{stage().innerHTML=`<h2>${back?'Ters sırayla':'Aynı sırayla'} yazın</h2>
+        <div class="panel"><label class="field" for="dsin">Sayılar<input id="dsin" type="text" inputmode="numeric" autocomplete="off" maxlength="9"></label></div><div><button class="btn accent" id="nx">Onayla</button></div>`;
+        $('#dsin').focus();const f=()=>r($('#dsin').value.replace(/\D/g,''));$('#nx').onclick=f;$('#dsin').onkeydown=e=>{if(e.key==='Enter')f()}});
+      const target=(back?ds.slice().reverse():ds).join('');
+      ok=ans===target;
+    }
+    if(!ok)break;best=len;len++;
+  }
+  return best;
+}
+
+async function stroop(){
+  const C=[{n:'KIRMIZI',v:'--s-red'},{n:'MAVİ',v:'--s-blue'},{n:'YEŞİL',v:'--s-green'},{n:'SARI',v:'--s-yellow'}];
+  await intro(`<h2>Renk-Kelime (Stroop)</h2><p class="lead">Ekranda bir renk adı göreceksiniz. Kelimeyi değil, <b>yazının rengini</b> seçin. Örneğin <span style="color:var(--s-blue);font-weight:700">KIRMIZI</span> için "Mavi". Süre 30 saniye.</p><p class="small muted">Renk görme farkınız varsa bu bölümün sonucu yanıltıcı olabilir.</p>`,'Başla',demoStroop);
+  return new Promise(res=>{
+    let ink,t0,correct=0,total=0,rts=[];const end=performance.now()+30000;
+    stage().innerHTML=`<div class="timer mono" id="tm">30 sn</div><div class="big" id="sw" style="min-height:1.3em"></div>
+      <div class="opts">${C.map((c,i)=>`<button class="opt" data-i="${i}" style="font-family:var(--f-body);font-size:1.1rem"><span class="swatch" style="background:var(${c.v})"></span>${c.n[0]+c.n.slice(1).toLocaleLowerCase('tr')}</button>`).join('')}</div>`;
+    const next=()=>{const w=rnd(0,3);do{ink=rnd(0,3)}while(ink===w);const el=$('#sw');el.textContent=C[w].n;el.style.color=`var(${C[ink].v})`;t0=performance.now()};next();
+    stage().querySelector('.opts').onclick=e=>{const b=e.target.closest('button');if(!b)return;total++;
+      if(+b.dataset.i===ink){correct++;rts.push(performance.now()-t0)}next()};
+    const iv=setInterval(()=>{const left=Math.ceil((end-performance.now())/1000);
+      if(ABORT||left<=0){clearInterval(iv);res({correct,total,rt:rts.length?Math.round(rts.reduce((a,b)=>a+b,0)/rts.length):null});return}
+      $('#tm').textContent=left+' sn'},200);
+  });
+}
+
+function demoWords(){return demoLoop(async()=>{
+  for(const w of ['masa','kalem','çiçek']){chk();stage().innerHTML=EX+`<div class="big">${w}</div>`;await sleep(1300);stage().innerHTML=EX;await sleep(250)}
+  stage().innerHTML=EX+`<h2>Hatırladığınız kelimeleri yazın</h2><div class="panel"><label class="field" for="ex-rc">Örnek cevap<textarea id="ex-rc" readonly>kalem, masa</textarea></label>
+  <p class="small"><b class="fb-good">2/3 doğru.</b> Sıra önemli değil, virgül ya da boşlukla ayırmanız yeterli. Gerçek testte 10 kelime var ve aynı liste testin sonunda, hiç uyarı yapılmadan yeniden sorulur.</p></div>`;
+})}
+function demoSDMT(){return demoLoop(async()=>{
+  const SY=['▲','●','■','★','✚','◆','▼','◐','☰'];
+  const draw=hl=>EX+`<div class="symkey">${SY.map((s,i)=>`<div class="${hl&&i===3?'hl':''}"><span>${s}</span><span>${i+1}</span></div>`).join('')}</div>
+    <div class="sym">★</div><div class="keypad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button tabindex="-1" class="${hl&&n===4?'hl':''}">${n}</button>`).join('')}</div>`;
+  stage().innerHTML=draw(false);await sleep(1500);chk();
+  stage().innerHTML=draw(true)+`<div class="panel ex-note"><p class="small"><b class="fb-good">Cevap: 4.</b> Ortadaki ★ anahtarda 4'ün üstünde, bu yüzden 4'e basılır. Hemen yeni bir sembol gelir; 60 saniyede mümkün olduğunca çok doğru eşleme yapmaya çalışın. Anahtarın sırası her testte değişir. Klavyede 1-9 tuşları da çalışır.</p></div>`;
+  stage().querySelector('.keypad').style.pointerEvents='none';
+})}
+function demoSpan(back){return demoLoop(async()=>{
+  const ds=back?[2,7,4]:[3,8,5],ans=(back?ds.slice().reverse():ds).join('');
+  stage().innerHTML=EX+`<p class="eyebrow">3 hane</p><div class="big mono" id="dg" style="min-height:1.3em"></div>`;await sleep(500);
+  for(const d of ds){chk();$('#dg').textContent=d;await sleep(900);$('#dg').textContent='';await sleep(200)}
+  stage().innerHTML=EX+`<h2>${back?'Ters sırayla':'Aynı sırayla'} yazın</h2><div class="panel"><label class="field" for="ex-ds">Örnek cevap<input id="ex-ds" type="text" readonly value="${ans}"></label>
+  <p class="small"><b class="fb-good">Doğru.</b> Gösterilen sıra ${ds.join(' · ')}, ${back?'tersten yazılınca '+ans:'aynen yazılınca '+ans} olur. Her doğru cevapta dizi bir hane uzar; aynı uzunlukta iki kez yanılınca bölüm biter.</p></div>`;
+})}
+function demoStroop(){return demoLoop(async()=>{
+  const C=[['Kırmızı','--s-red'],['Mavi','--s-blue'],['Yeşil','--s-green'],['Sarı','--s-yellow']];
+  const draw=hl=>EX+`<div class="big" style="color:var(--s-red)">YEŞİL</div><div class="opts">${C.map((c,i)=>`<div class="opt ${hl&&i===0?'hl':''}" style="font-family:var(--f-body);font-size:1.1rem"><span><span class="swatch" style="background:var(${c[1]})"></span>${c[0]}</span></div>`).join('')}</div>`;
+  stage().innerHTML=draw(false);await sleep(1600);chk();
+  stage().innerHTML=draw(true)+`<div class="panel ex-note"><p class="small"><b class="fb-good">Cevap: Kırmızı.</b> Kelime "YEŞİL" yazıyor ama yazının rengi kırmızı. Kelimeyi okumamaya, yalnızca rengine bakmaya çalışın. Bu, beynin otomatik tepkiyi bastırma becerisini ölçer.</p></div>`;
+})}
+async function runAssessment(){
+  const li=nextListIndex();CUR_WORDS=wordList(li);
+  const R={date:localDate(),age:S.profile.age,list:li};
+  await screen(`<h2>Bilişsel profil ölçümü</h2><p class="lead">Beş kısa bölüm, toplam yaklaşık 10 dakika. Sessiz bir ortamda, dinlenmiş olarak yapın. Bu bir tanı testi değildir; kendi referans noktanızı oluşturur.</p>`,'Başla');
+  await intro(`<h2>1 · Kelime listesi</h2><p class="lead">10 kelime, her biri 2 saniye gösterilecek. Hepsini aklınızda tutmaya çalışın. Testin sonunda tekrar sorulacak.</p>`,'Kelimeleri göster',demoWords);
+  for(const w of CUR_WORDS){chk();stage().innerHTML=`<div class="big">${w}</div>`;await sleep(2000);stage().innerHTML='';await sleep(250)}
+  R.immediate=await recall('Hatırladığınız kelimeleri yazın');
+  R.sdmt=await sdmt();
+  R.dsf=await digitSpan(false);
+  R.dsb=await digitSpan(true);
+  R.stroop=await stroop();
+  R.delayed=await recall('Baştaki kelime listesini hatırlıyor musunuz?');
+  S.assessments.push(R);save();
+  await showResults(R);
+}
+
+function resultCards(R,prev){
+  const d=(a,b,lowerBetter)=>{if(b==null||a==null)return'';const x=a-b;if(!x)return'<span class="small muted"> · değişim yok</span>';
+    const good=lowerBetter?x<0:x>0;return `<span class="small ${good?'fb-good':'fb-bad'}"> · ${x>0?'+':''}${x}</span>`};
+  return `<div class="result-grid">
+    <div class="panel"><span class="eyebrow">Anlık hatırlama</span><span class="v">${R.immediate}/10</span>${d(R.immediate,prev?.immediate)}</div>
+    <div class="panel"><span class="eyebrow">Gecikmeli hatırlama</span><span class="v">${R.delayed}/10</span>${d(R.delayed,prev?.delayed)}</div>
+    <div class="panel"><span class="eyebrow">İşlem hızı · SDMT</span><span class="v">${R.sdmt.correct}</span><span class="small muted">60 sn'de doğru, ${R.sdmt.errors} hata</span>${d(R.sdmt.correct,prev?.sdmt?.correct)}</div>
+    <div class="panel"><span class="eyebrow">Sayı dizisi</span><span class="v">${R.dsf} / ${R.dsb}</span><span class="small muted">ileri / geri hane</span></div>
+    <div class="panel"><span class="eyebrow">Stroop</span><span class="v">${R.stroop.correct}</span><span class="small muted">doğru, ${R.stroop.total?Math.round(100*R.stroop.correct/R.stroop.total):0}% isabet${R.stroop.rt?`, ${R.stroop.rt} ms`:''}</span>${d(R.stroop.correct,prev?.stroop?.correct)}</div>
+  </div>`;
+}
+async function showResults(R){
+  const prev=S.assessments.length>1?S.assessments[S.assessments.length-2]:null;
+  const notes=[];
+  if(R.delayed<=3&&R.immediate>=5)notes.push('Gecikmeli hatırlama anlık hatırlamaya göre belirgin düşük. Tek bir ölçüm yorgunluk veya dikkat dağınıklığından etkilenebilir; birkaç hafta sonra tekrarlayın. Düşüklük sürüyorsa ya da günlük yaşamda unutkanlık fark ediliyorsa doktorunuza danışın.');
+  if(R.dsb>=R.dsf&&R.dsf>0)notes.push('Geriye sayı dizisi ileriye göre eşit ya da yüksek; genelde geriye dizi 1-2 hane kısadır. Dikkatli çalışmışsınız.');
+  notes.push('Bu sonuçlar sizin referans noktanız. Uygulama bunları nüfus normlarıyla karşılaştırmaz; anlamlı olan zaman içindeki değişimdir. Üç ayda bir tekrarlayın.');
+  await screen(`<span class="eyebrow">${fmtDate(R.date)} · kelime listesi ${LIST_NAMES[R.list??0]}</span><h2>Bilişsel profiliniz</h2>${resultCards(R,prev)}
+    <div class="panel"><ul style="margin:0;padding-left:18px;display:grid;gap:8px">${notes.map(n=>`<li>${n}</li>`).join('')}</ul></div>`,'Programa dön');
+}
+
+/* ---------- TEST tab ---------- */
+function renderTest(){
+  const la=lastAssess();
+  $('#v-test').innerHTML=`
+    <div><button class="btn ghost" data-go="progress">← İlerleme</button></div>
+    <div style="display:grid;gap:8px"><span class="eyebrow">Ölçüm</span><h1>Bilişsel profil</h1>
+    <p class="lead">Dört bilişsel alanı ölçen beş kısa görev. Her biri nöropsikolojide yaygın kullanılan bir paradigmanın kısaltılmış versiyonudur. Sonuçlar tanı koymaz; değişimi izlemenizi sağlar.</p></div>
+    <div class="panel">
+      <div class="tbl"><table><thead><tr><th>Görev</th><th>Alan</th><th>Dayandığı test</th></tr></thead><tbody>
+        <tr><td>10 kelime öğrenme + gecikmeli hatırlama</td><td>Epizodik bellek</td><td>CERAD kelime listesi · 8 dönüşümlü liste</td></tr>
+        <tr><td>Sembol-Sayı Eşleme, 60 sn</td><td>İşlem hızı</td><td>SDMT</td></tr>
+        <tr><td>Sayı dizisi ileri / geri</td><td>Çalışma belleği</td><td>WAIS Digit Span</td></tr>
+        <tr><td>Renk-kelime, 30 sn</td><td>Yürütücü işlev, ketleme</td><td>Stroop</td></tr>
+      </tbody></table></div>
+      <div class="row"><button class="btn accent" data-act="assess">${la?'Ölçümü tekrarla':'Ölçüme başla'}</button><span class="small muted">Yaklaşık 10 dakika</span></div>
+    </div>
+    ${la?`<div style="display:grid;gap:12px"><h2>Son ölçüm · ${fmtDate(la.date)}</h2><p class="small muted">Kelime listesi ${LIST_NAMES[la.list??0]}. Pratik etkisini önlemek için her ölçümde farklı, ama yapısı denk bir liste kullanılır; sıradaki liste ${LIST_NAMES[nextListIndex()]}.</p>${resultCards(la,S.assessments.length>1?S.assessments[S.assessments.length-2]:null)}</div>`:''}`;
+}
+
+/* ---------- SPEED TRAINING (UFOV / Double-Decision style) ---------- */
+const CAR=`<g class="car"><rect x="-30" y="-6" width="60" height="16" rx="5"/><rect x="-16" y="-19" width="30" height="15" rx="5"/></g><circle class="wheel" cx="-17" cy="12" r="6"/><circle class="wheel" cx="17" cy="12" r="6"/>`;
+const TRUCK=`<g class="car"><rect x="-34" y="-22" width="40" height="32" rx="2"/><rect x="8" y="-8" width="26" height="18" rx="4"/></g><circle class="wheel" cx="-23" cy="12" r="6"/><circle class="wheel" cx="-3" cy="12" r="6"/><circle class="wheel" cx="22" cy="12" r="6"/>`;
+const POS=[...Array(8)].map((_,i)=>{const a=i*Math.PI/4-Math.PI/2;return[200+150*Math.cos(a),200+150*Math.sin(a)]});
+const star=(x,y)=>{let p=[];for(let i=0;i<10;i++){const r=i%2?8:18,a=i*Math.PI/5-Math.PI/2;p.push((x+r*Math.cos(a)).toFixed(1)+','+(y+r*Math.sin(a)).toFixed(1))}return`<polygon class="tgt" points="${p.join(' ')}"/>`};
+const sq=(x,y)=>`<rect class="dis" x="${x-13}" y="${y-13}" width="26" height="26" rx="3"/>`;
+function maskSVG(){let s='<g class="mask">';for(let i=0;i<260;i++){const x=rnd(5,395),y=rnd(5,395),a=Math.random()*Math.PI,l=rnd(8,22);s+=`<line x1="${x}" y1="${y}" x2="${(x+l*Math.cos(a)).toFixed(0)}" y2="${(y+l*Math.sin(a)).toFixed(0)}"/>`}return s+'</g>'}
+function distractorCount(){const n=S.sessions.filter(s=>s.type==='speed').length;return n<3?0:n<6?3:7}
+
+const FACE=sm=>`<circle class="car" r="24"/><circle class="eye" cx="-8" cy="-6" r="3.5"/><circle class="eye" cx="8" cy="-6" r="3.5"/><path class="feat" d="${sm?'M-11 5 Q0 16 11 5':'M-11 13 Q0 3 11 13'}"/>`;
+const VAR={
+  arac:{name:'Araçlar',A:CAR,B:TRUCK,la:'araba',lb:'kamyon',vb:'-45 -30 90 50',tgt:star,tname:'yıldız',dis:sq,dname:'gri kareler'},
+  yuz:{name:'Yüzler',A:FACE(true),B:FACE(false),la:'gülen yüz',lb:'üzgün yüz',vb:'-30 -30 60 60',tgt:(x,y)=>`<g class="tgtg" transform="translate(${x} ${y}) scale(.62)">${CAR}</g>`,tname:'küçük araba',dis:(x,y)=>`<circle class="dis" cx="${x}" cy="${y}" r="14"/>`,dname:'gri daireler'}};
+const cap=t=>t[0].toLocaleUpperCase('tr')+t.slice(1);
+
+function demoSpeed(nd,V){return demoLoop(async()=>{
+  const pos=2,dis=nd?[0,4,6]:[];
+  stage().innerHTML=EX+`<p class="small muted">Örnek yavaş gösteriliyor (1,2 saniye). Gerçek seansta süre çok daha kısa.</p><svg class="field-svg" id="fs" viewBox="0 0 400 400"><path class="fix" d="M190 200h20M200 190v20"/></svg><div id="q" class="ex-note" style="min-height:120px"></div>`;
+  const fs=$('#fs');await sleep(900);chk();
+  fs.innerHTML=`<g transform="translate(200 205)">${V.B}</g>${V.tgt(...POS[pos])}${dis.map(i=>V.dis(...POS[i])).join('')}`;await sleep(1200);chk();
+  fs.innerHTML=maskSVG();await sleep(500);chk();
+  fs.innerHTML=`<path class="fix" d="M190 200h20M200 190v20"/>`+POS.map((p,i)=>`<circle class="slot ${i===pos?'hl':''}" cx="${p[0]}" cy="${p[1]}" r="24"/>`).join('')+V.tgt(...POS[pos]);
+  $('#q').innerHTML=`<div class="opts" style="margin-bottom:12px"><div class="opt"><svg viewBox="${V.vb}" width="70">${V.A}</svg></div><div class="opt hl"><svg viewBox="${V.vb}" width="70">${V.B}</svg></div></div>
+    <div class="panel"><p class="small"><b class="fb-good">Cevap: ${V.lb}, sağdaki nokta.</b> Önce ortadakini seçersiniz, sonra ${V.tname} hangi noktada çıktıysa ona dokunursunuz. İkisi de doğru olmalı. ${nd?cap(V.dname)+' şaşırtıcıdır, onları yok sayın. ':''}Gözünüz ortadaki artıda kalsın; hedefi göz ucuyla yakalamak egzersizin amacı.</p></div>`;
+})}
+
+/* Ekran zamanlaması: süre milisaniye değil kare sayısı olarak yönetilir */
+const nextFrame=()=>new Promise(r=>requestAnimationFrame(r));
+async function measureRefresh(n=72){
+  const ts=[];for(let i=0;i<n;i++)ts.push(await nextFrame());
+  const d=ts.slice(8).map((x,i,a)=>i?x-a[i-1]:0).slice(1).sort((x,y)=>x-y);
+  return d[Math.floor(d.length/2)];
+}
+const IN_APP=/FBAN|FBAV|Instagram|Line\/|Twitter|LinkedInApp|Snapchat|TikTok|musical_ly/i;
+async function calibrateScreen(){
+  for(;;){chk();
+    stage().innerHTML=`<h2>Ekran ölçülüyor</h2><p class="lead">Cihazınızın ekranı saniyede kaç kez yenilediğini ölçüyoruz. Bir saniye sürer.</p>`;
+    await sleep(250);const period=await measureRefresh();chk();
+    const hz=Math.round(1000/period),inApp=IN_APP.test(navigator.userAgent||'');
+    if(hz>=50&&!inApp)return period;
+    const msgs=[];
+    if(hz<50)msgs.push(`<p>Ekranınız şu an saniyede yaklaşık <b class="mono">${hz}</b> kare çiziyor; normalde 60 veya daha fazla olur. Bu durumda en kısa gösterim <span class="mono">${Math.round(period)} ms</span> ile sınırlanır ve ileri seviyelerde egzersiz tavana çarpar.</p>
+      <p class="small">Sebep genellikle pil tasarrufudur: iPhone'da <b>Ayarlar › Pil › Düşük Güç Modu</b>, Android'de pil tasarrufu, Chrome'da <b>Enerji tasarrufu modu</b>. Kapatıp yeniden ölçün. Cihaz şarjdaysa bu modlar çoğu zaman devreye girmez.</p>`);
+    if(inApp)msgs.push(`<p>Sayfa bir uygulamanın (Instagram, Facebook gibi) içindeki tarayıcıda açılmış görünüyor. Bu tarayıcılar ekran zamanlamasını bozabilir. Menüden <b>Tarayıcıda aç</b> seçeneğiyle Safari veya Chrome'da açın.</p>`);
+    const c=await new Promise(r=>{stage().innerHTML=`<h2>Zamanlama için uygun değil</h2><div class="panel" style="gap:10px">${msgs.join('')}</div>
+      <div class="row" style="justify-content:center"><button class="btn ghost" id="rm">Yeniden ölç</button><button class="btn" id="gc">Yine de devam et</button></div>`;
+      $('#rm').focus();$('#rm').onclick=()=>r('again');$('#gc').onclick=()=>r('go')});
+    if(c==='go')return period;
+  }
+}
+
+async function speedSession(vk){
+  const V=VAR[vk]||VAR.arac,N=30,nd=distractorCount();
+  await intro(`<h2>Çift Odak · ${V.name}</h2>
+    <p class="lead">Ekranın ortasında kısa bir an için bir <b>${V.la}</b> ya da <b>${V.lb}</b>, aynı anda çevrede bir <b>${V.tname}</b> belirecek. Ardından ekran karışık çizgilerle örtülecek.</p>
+    <div class="panel"><ol style="margin:0;padding-left:20px;display:grid;gap:6px">
+      <li>Ortada hangisinin olduğunu seçin.</li><li>${cap(V.tname)} hangi noktada çıktıysa ona dokunun.</li>
+      <li>İkisi de doğruysa süre kısalır, hata yaparsanız uzar. Hedefiniz, ikisini de görebildiğiniz en kısa süreyi bulmak.</li></ol>
+      <p class="small muted">Gözünüzü ortadaki artıda tutun. ${nd?`Bu seviyede çevrede ${nd} şaşırtıcı nesne de var.`:'İlk seanslarda şaşırtıcı nesne yok.'} 30 deneme, yaklaşık 5 dakika. Başlamadan önce ekranınızın yenileme hızı ölçülür.</p></div>
+    <div class="row" style="justify-content:center"><svg viewBox="${V.vb}" width="80">${V.A}</svg><span class="muted">${V.la}</span><svg viewBox="${V.vb}" width="80">${V.B}</svg><span class="muted">${V.lb}</span></div>`,'Başla',()=>demoSpeed(nd,V));
+
+  const period=await calibrateScreen(),hz=Math.round(1000/period);
+  S.lastHz=hz;
+  const maxF=Math.max(2,Math.ceil(1000/period)),maskF=Math.max(1,Math.round(300/period));
+  let frames=Math.min(maxF,Math.max(1,Math.round((S.speedDur||startDur(S.profile.age))/period)));
+  const MASKS=[maskSVG(),maskSVG(),maskSVG(),maskSVG()];
+  const hist=[];let streakOK=0,okCount=0;
+  for(let t=0;t<N;t++){chk();
+    const isB=Math.random()<.5,pos=rnd(0,7);
+    const dis=shuffle([0,1,2,3,4,5,6,7].filter(i=>i!==pos)).slice(0,nd);
+    const shown=frames*period;
+    // Tüm katmanlar önceden çizilir; geçiş anında sadece görünürlük değişir
+    stage().innerHTML=`<p class="eyebrow mono">${t+1}/${N} · ${frames} kare ≈ ${Math.round(shown)} ms · ${hz} Hz</p>
+      <svg class="field-svg" id="fs" viewBox="0 0 400 400">
+        <g id="g-stim" visibility="hidden"><g transform="translate(200 205)">${isB?V.B:V.A}</g>${V.tgt(...POS[pos])}${dis.map(i=>V.dis(...POS[i])).join('')}</g>
+        <g id="g-mask" visibility="hidden">${MASKS[t%MASKS.length]}</g>
+        <g id="g-fix"><path class="fix" d="M190 200h20M200 190v20"/></g>
+        <g id="g-resp"></g>
+      </svg><div id="q" style="min-height:130px"></div>`;
+    const fs=$('#fs'),gS=$('#g-stim'),gM=$('#g-mask'),gF=$('#g-fix'),gR=$('#g-resp');
+    await sleep(700);chk();
+    await nextFrame();await nextFrame();                        // kare sınırına hizala
+    gF.setAttribute('visibility','hidden');gS.setAttribute('visibility','visible');
+    for(let k=0;k<frames;k++)await nextFrame();                 // uyaran tam "frames" kare ekranda
+    gS.setAttribute('visibility','hidden');gM.setAttribute('visibility','visible');
+    for(let k=0;k<maskF;k++)await nextFrame();
+    gM.setAttribute('visibility','hidden');gF.setAttribute('visibility','visible');
+    chk();
+    const a1=await new Promise(r=>{$('#q').innerHTML=`<p style="margin-bottom:10px;font-weight:600">Ortada hangisi vardı?</p><div class="opts"><button class="opt" data-v="0" aria-label="${V.la}"><svg viewBox="${V.vb}" width="70">${V.A}</svg></button><button class="opt" data-v="1" aria-label="${V.lb}"><svg viewBox="${V.vb}" width="70">${V.B}</svg></button></div>`;
+      $('#q').querySelector('.opts').onclick=e=>{const b=e.target.closest('button');if(b)r(b.dataset.v==='1')}});
+    chk();
+    const a2=await new Promise(r=>{$('#q').innerHTML=`<p style="font-weight:600">${cap(V.tname)} nerede çıktı? Noktaya dokunun.</p>`;
+      gR.innerHTML=POS.map((p,i)=>`<circle class="slot" data-i="${i}" cx="${p[0]}" cy="${p[1]}" r="24"/>`).join('');
+      fs.onclick=e=>{const c=e.target.closest('.slot');if(c){fs.onclick=null;r(+c.dataset.i)}}});
+    chk();
+    const ok=a1===isB&&a2===pos;hist.push(shown);if(ok)okCount++;
+    $('#q').innerHTML=`<p class="${ok?'fb-good':'fb-bad'}" style="font-weight:700;font-size:1.2rem">${ok?'Doğru':'Yanlış'}</p><p class="small muted">${a1===isB?'Orta doğru':'Ortadaki: '+(isB?V.lb:V.la)}${a2===pos?', yer doğru':', yer farklıydı'}</p>`;
+    gR.innerHTML='';gF.setAttribute('visibility','hidden');gS.setAttribute('visibility','visible');
+    // Kare tabanlı merdiven: 2 doğru üst üste → en az 1 kare kısalır; 1 hata → en az 1 kare uzar
+    if(ok){streakOK++;if(streakOK>=2){frames=Math.max(1,Math.min(frames-1,Math.round(frames*0.85)));streakOK=0}}
+    else{streakOK=0;frames=Math.min(maxF,Math.max(frames+1,Math.round(frames*1.15)))}
+    await sleep(900);
+  }
+  const last=hist.slice(-12);const thr=Math.round(Math.exp(last.reduce((a,b)=>a+Math.log(b),0)/last.length));
+  S.speedDur=frames*period;
+  S.sessions.push({type:'speed',v:vk,date:localDate(),thr,acc:Math.round(100*okCount/N),dis:nd,hz});save();
+  const prev=S.sessions.filter(s=>s.type==='speed').slice(-2,-1)[0];
+  const floor=frames===1&&hz<100;
+  await screen(`<h2>Seans tamamlandı</h2><div class="result-grid"><div class="panel"><span class="eyebrow">Eşik süre</span><span class="v">${thr} ms</span>${prev?`<span class="small ${thr<=prev.thr?'fb-good':'muted'}">önceki: ${prev.thr} ms</span>`:''}</div><div class="panel"><span class="eyebrow">Doğruluk</span><span class="v">${Math.round(100*okCount/N)}%</span></div><div class="panel"><span class="eyebrow">Ekran</span><span class="v">${hz} Hz</span><span class="small muted">1 kare = ${period.toFixed(1)} ms</span></div></div>
+    <p class="lead">Eşik süre, ikisini birden doğru yakalayabildiğiniz gösterim süresidir; düştükçe görsel işlem hızınız artıyor demektir. Süreler ekranın gerçek kare süresine göre hesaplanır.</p>
+    ${floor?`<div class="banner"><p class="small">Ekranınızın gösterebildiği en kısa süreye (1 kare) ulaştınız. Bu noktadan sonra zorluk çevredeki şaşırtıcı nesnelerle artar.</p></div>`:''}`,'Bitir');
+}
+
+/* ---------- MEMORY STRATEGY (ACTIVE memory arm style) ---------- */
+const MEMCAT={meyve:['mandalina','armut','kiraz','üzüm','incir','karpuz','ayva','nar','erik','şeftali'],
+  eşya:['makas','şemsiye','yastık','anahtar','saat','gözlük','cüzdan','tarak','mum','sandalye'],
+  hayvan:['kedi','aslan','kartal','kaplumbağa','at','balık','arı','tilki','baykuş','keçi'],
+  ulaşım:['tren','gemi','bisiklet','uçak','otobüs','kayık','motosiklet','tramvay','helikopter','balon'],
+  doğa:['dağ','deniz','orman','çöl','ada','mağara','şelale','göl','tepe','volkan']};
+const LOCI=['Ayakkabılık','Portmanto','Koridor','Salon koltuğu','Televizyon','Mutfak tezgâhı','Buzdolabı','Lavabo','Balkon','Yatak','Gardırop','Pencere kenarı'];
+const TECH={
+  loci:{name:'Yer yöntemi',how:'Evinizde iyi bildiğiniz bir rotayı düşünün: ayakkabılıktan başlayıp pencere kenarına kadar. Her kelimeyi rotadaki sıradaki yere canlı, abartılı, hareketli bir sahneyle yerleştirin. Hatırlarken zihninizde rotada yürüyün.'},
+  group:{name:'Gruplama',how:'Kelimeler karışık sırayla gelir ama birkaç kategoriye aittir. Her kelimenin kategorisini fark edin ve zihninizde aynı gruptakileri bir araya toplayın. Hatırlarken kategori kategori ilerleyin.'},
+  story:{name:'Hikâye zinciri',how:'Her yeni kelimeyi bir öncekine bağlayan kısa, tuhaf ve hareketli bir sahne kurun. Sonunda bütün kelimeler tek bir hikâyenin halkaları olur; hatırlarken hikâyeyi baştan anlatırsınız.'}};
+const memTech=()=>['loci','group','story'][S.sessions.filter(s=>s.type==='memory').length%3];
+
+function demoMemory(tk){return demoLoop(async()=>{
+  if(tk==='loci'){
+    const ex=[['Ayakkabılık','kartal','Ayakkabılığın kapağını açınca içinden kanat çırparak bir kartal fırlıyor.'],['Portmanto','şemsiye','Portmantodaki bütün paltolar açık şemsiyeye dönüşmüş, damlalar akıyor.'],['Koridor','karpuz','Koridor boyunca dev bir karpuz üzerinize doğru yuvarlanıyor.']];
+    for(const[l,w]of ex){chk();stage().innerHTML=EX+`<p class="eyebrow">Yer · ${l}</p><div class="big">${w}</div>`;await sleep(1500)}
+    stage().innerHTML=EX+`<h2>Örnek imgeler</h2><div class="panel ex-note">${ex.map(([l,w,t])=>`<p class="small"><b>${l} → ${w}:</b> ${t}</p>`).join('')}<p class="small"><b class="fb-good">Hatırlarken:</b> zihninizde eve girip ayakkabılığa, portmantoya, koridora bakarsınız; kartal, şemsiye, karpuz yerlerinde sizi bekler.</p></div>`;
+  }else if(tk==='group'){
+    const ex=['kiraz','tren','armut','uçak','nar','gemi'];
+    for(const w of ex){chk();stage().innerHTML=EX+`<p class="eyebrow">Kategorisini fark edin</p><div class="big">${w}</div>`;await sleep(1100)}
+    stage().innerHTML=EX+`<h2>Örnek gruplama</h2><div class="panel ex-note"><p class="small">Kelimeler karışık geldi ama iki grup var:</p><p class="small"><b>Meyve:</b> kiraz, armut, nar<br><b>Ulaşım:</b> tren, uçak, gemi</p><p class="small"><b class="fb-good">Hatırlarken:</b> önce "meyveler neydi?" diye sorun, sonra "araçlar neydi?". Altı ayrı kelime yerine iki küçük paket taşırsınız.</p></div>`;
+  }else{
+    const ex=['kedi','bisiklet','mum'];
+    for(let i=0;i<ex.length;i++){chk();stage().innerHTML=EX+`<p class="eyebrow">${i?ex[i-1]+' →':'Başlangıç'}</p><div class="big">${ex[i]}</div>`;await sleep(1400)}
+    stage().innerHTML=EX+`<h2>Örnek hikâye</h2><div class="panel ex-note"><p class="small">"Bir <b>kedi</b> <b>bisiklete</b> binmiş, gidonuna yanan bir <b>mum</b> bağlamış; mum eridikçe bisiklet hızlanıyor."</p><p class="small"><b class="fb-good">İpucu:</b> Sahne ne kadar tuhaf, renkli ve hareketliyse o kadar akılda kalır. Hatırlarken hikâyeyi baştan oynatın.</p></div>`;
+  }
+})}
+
+async function memorySession(){
+  const lv=S.memLevel||1,n=[6,8,10,12][lv-1],tk=memTech(),T=TECH[tk],per=lv>=3?3000:4000;
+  await intro(`<h2>Hafıza Sarayı · ${T.name}</h2><p class="lead">${T.how}</p><div class="panel"><p class="small muted">Seviye ${lv}: ${n} kelime, her biri ${per/1000} saniye. Ardından 20 saniyelik kısa bir mola ve hatırlama. Teknik her seansta değişir: yer yöntemi, gruplama, hikâye zinciri.</p></div>`,'Başla',()=>demoMemory(tk));
+  let words;
+  if(tk==='group'){const cats=shuffle(Object.keys(MEMCAT)).slice(0,n<=8?2:3);words=[];let i=0;
+    while(words.length<n){const pool=MEMCAT[cats[i%cats.length]].filter(w=>!words.includes(w));words.push(pool[rnd(0,pool.length-1)]);i++}shuffle(words)}
+  else words=shuffle(Object.values(MEMCAT).flat()).slice(0,n);
+  for(let i=0;i<n;i++){chk();
+    const cue=tk==='loci'?`<p class="eyebrow">Yer ${i+1} · ${LOCI[i]}</p>`:tk==='story'?`<p class="eyebrow">${i?esc(words[i-1])+' →':'Başlangıç'}</p>`:`<p class="eyebrow">${i+1}/${n} · kategorisini fark edin</p>`;
+    const hint=tk==='loci'?'Bu yerde canlı, abartılı bir sahne hayal edin.':tk==='story'?'Önceki kelimeyle bağlayan bir sahne kurun.':'Hangi gruba ait?';
+    stage().innerHTML=cue+`<div class="big">${words[i]}</div><p class="small muted">${hint}</p>`;
+    await sleep(per);stage().innerHTML='';await sleep(250);
+  }
+  const st=rnd(80,120);
+  stage().innerHTML=`<h2>Kısa mola</h2><p class="lead">${st} sayısından geriye doğru üçer üçer sesli sayın: ${st}, ${st-3}, ${st-6}…</p><div class="big mono" id="cd">20</div>`;
+  for(let t=20;t>0;t--){chk();$('#cd').textContent=t;await sleep(1000)}
+  chk();
+  const got=await new Promise(r=>{
+    const guide=tk==='loci'?`<p class="lead">Rotanızda yürüyün: ${LOCI.slice(0,n).join(' → ')}</p>`:tk==='group'?'<p class="lead">Kategori kategori ilerleyin.</p>':'<p class="lead">Hikâyeyi baştan anlatın.</p>';
+    stage().innerHTML=`<h2>Kelimeleri hatırlayın</h2>${guide}<div class="panel"><label class="field" for="mrc">Kelimeler<textarea id="mrc" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea></label></div><div><button class="btn accent" id="nx">Bitirdim</button></div>`;
+    $('#mrc').focus();$('#nx').onclick=()=>r(new Set($('#mrc').value.split(/[\s,;.→]+/).map(norm).filter(Boolean)))});
+  const miss=words.filter(w=>!got.has(norm(w))),sc=n-miss.length;let msg='Seviye aynı kalıyor.';
+  if(sc/n>=.8&&lv<4){S.memLevel=lv+1;msg=`Bir sonraki seans seviye ${lv+1}: ${[6,8,10,12][lv]} kelime.`}
+  else if(sc/n<=.4&&lv>1){S.memLevel=lv-1;msg=`Bir sonraki seans seviye ${lv-1}.`}
+  S.sessions.push({type:'memory',date:localDate(),tech:tk,level:lv,score:sc,n});save();
+  await screen(`<h2>${sc}/${n} kelime</h2><p class="lead">${msg}</p>${miss.length?`<div class="panel"><p class="small"><b>Kaçanlar:</b> ${miss.join(', ')}</p>${tk==='loci'?`<p class="small muted">Yerleriyle: ${words.map((w,i)=>miss.includes(w)?LOCI[i]+' → '+w:'').filter(Boolean).join(' · ')}</p>`:''}</div>`:''}<p class="small muted">Tekniği günlük hayatta deneyin: alışveriş listesini evinizin rotasına yerleştirmek iyi bir başlangıç.</p>`,'Bitir');
+}
+
+/* ---------- MOVEMENT ROUTINE ---------- */
+const MOVE={
+  std:[{n:'Yerinde tempolu yürüme',s:60,d:'Kollarınızı sallayarak dizlerinizi rahat bir yüksekliğe kaldırın.'},
+    {n:'Squat',s:45,d:'Ayaklar omuz genişliğinde, arkanızdaki bir sandalyeye oturacakmış gibi kalçanızı geri itin, dizleri ayak uçlarını geçirmeden kalkın.'},
+    {n:'Duvara şınav',s:45,d:'Duvardan bir kol boyu uzakta durun, elleri omuz hizasında duvara koyun, göğsünüzü yaklaştırıp itin.'},
+    {n:'Kalça köprüsü',s:45,d:'Sırtüstü yatın, dizler bükülü. Kalçanızı sıkarak yukarı kaldırın, 2 saniye tutun, indirin.'},
+    {n:'Geriye adım',s:45,d:'Bir ayakla geriye büyük adım atıp iki dizi hafifçe bükün, öne dönün. Bacakları sırayla değiştirin.'},
+    {n:'Tek ayak denge · sağ',s:30,d:'Sağ ayak üzerinde durun. Gerekirse bir parmağınızla duvara dokunun.'},
+    {n:'Tek ayak denge · sol',s:30,d:'Sol ayak üzerinde durun. Zorlaştırmak için gözlerinizi kısa süre kapatın.'},
+    {n:'Duvar plank',s:30,d:'Ön kollarınızı duvara dayayıp vücudunuzu düz bir çizgide tutun, karnınızı sıkın. Zorlanmıyorsanız yerde dirsek plank yapın.'},
+    {n:'Topuk-parmak yürüyüşü',s:45,d:'Bir ayağın topuğunu diğerinin parmak ucunun hemen önüne koyarak düz bir çizgide yürüyün.'},
+    {n:'Esneme',s:60,d:'Göğüs ve bacak arkası: kolları arkada birleştirip göğsü açın, sonra bir bacağı uzatıp öne eğilin. Nefesinizi tutmayın.'}],
+  senior:[{n:'Yerinde yürüme',s:60,d:'Sandalyeye yakın durun. Dizlerinizi rahat yükseklikte kaldırın; oturarak da yapabilirsiniz.'},
+    {n:'Sandalyeden otur-kalk',s:45,d:'Kollu olmayan sağlam bir sandalyede, mümkünse elleri kullanmadan kalkıp yavaşça oturun.'},
+    {n:'Duvara şınav',s:45,d:'Duvardan bir kol boyu uzakta durun, elleri omuz hizasında duvara koyun, göğsünüzü yaklaştırıp itin.'},
+    {n:'Parmak ucunda yükselme',s:45,d:'Sandalyenin arkasına tutunun, topuklarınızı yavaşça kaldırıp indirin.'},
+    {n:'Yana bacak açma · sağ',s:30,d:'Sandalyeye tutunarak sağ bacağı dik şekilde yana açıp geri getirin.'},
+    {n:'Yana bacak açma · sol',s:30,d:'Sandalyeye tutunarak sol bacağı dik şekilde yana açıp geri getirin.'},
+    {n:'Tek ayak denge · sağ',s:20,d:'Sandalyenin yanında, gerekirse tek elle tutunarak sağ ayak üzerinde durun.'},
+    {n:'Tek ayak denge · sol',s:20,d:'Sandalyenin yanında, gerekirse tek elle tutunarak sol ayak üzerinde durun.'},
+    {n:'Topuk-parmak yürüyüşü',s:45,d:'Duvar boyunca, bir eliniz duvarda, topuğu diğer ayağın parmak ucunun önüne koyarak yürüyün.'},
+    {n:'Oturarak esneme',s:60,d:'Sandalyede oturun, bir bacağı uzatıp hafifçe öne eğilin; sonra kolları yukarı uzatın. Nefesinizi tutmayın.'}]};
+
+/* ---------- Hareket figürleri: iki poz arasında gidip gelen çöp adam ---------- */
+const POSE_BASE={
+  side:{h:[100,36],n:[100,54],p:[100,108],e1:[103,81],a1:[105,106],e2:[97,81],a2:[95,106],k1:[101,146],f1:[100,182],k2:[99,146],f2:[100,182]},
+  front:{h:[100,36],n:[100,54],p:[100,108],e1:[86,80],a1:[82,104],e2:[114,80],a2:[118,104],k1:[93,146],f1:[92,182],k2:[107,146],f2:[108,182]},
+  seated:{h:[90,68],n:[88,86],p:[80,138],k1:[116,138],f1:[114,182],k2:[114,139],f2:[112,182],e1:[100,108],a1:[112,128],e2:[98,110],a2:[110,130]}};
+const shiftY=(o,dy,keep)=>{const r={};for(const k in o)r[k]=keep.includes(k)?o[k]:[o[k][0],o[k][1]+dy];return r};
+const ON_CHAIR={e2:[84,82],a2:[69,96]};
+const FIG={
+  march:{base:'side',per:1.6,A:{k1:[120,130],f1:[114,162],e1:[90,80],a1:[82,100],e2:[112,78],a2:[124,92]},B:{k1:[101,146],f1:[100,182],k2:[120,130],f2:[114,162],e1:[112,78],a1:[124,92],e2:[90,80],a2:[82,100]}},
+  squat:{base:'side',per:2.6,A:{e1:[118,64],a1:[140,64],e2:[116,66],a2:[138,66]},B:{h:[110,74],n:[100,90],p:[76,140],k1:[110,150],f1:[100,182],k2:[108,152],f2:[98,182],e1:[120,92],a1:[142,92],e2:[118,94],a2:[140,94]}},
+  wallpush:{base:'side',per:2.4,props:['wall'],A:{h:[140,52],n:[130,66],p:[110,120],k1:[100,152],f1:[90,182],k2:[99,152],f2:[89,182],e1:[150,69],a1:[161,70],e2:[148,71],a2:[159,72]},B:{h:[150,60],n:[140,74],p:[116,124],k1:[103,153],f1:[90,182],k2:[102,153],f2:[89,182],e1:[148,92],a1:[161,72],e2:[146,94],a2:[159,74]}},
+  bridge:{base:'side',per:2.8,A:{h:[38,170],n:[56,172],p:[108,176],k1:[138,146],f1:[150,182],k2:[136,147],f2:[148,182],e1:[80,178],a1:[102,180],e2:[78,178],a2:[100,180]},B:{h:[38,170],n:[56,172],p:[112,148],k1:[140,144],f1:[150,182],k2:[138,145],f2:[148,182],e1:[80,178],a1:[102,180],e2:[78,178],a2:[100,180]}},
+  lunge:{base:'side',per:2.8,A:{e1:[90,86],a1:[99,108],e2:[110,86],a2:[101,108]},B:{h:[100,64],n:[100,82],p:[98,134],k1:[78,166],f1:[60,180],k2:[120,152],f2:[120,182],e1:[90,112],a1:[99,134],e2:[110,112],a2:[101,134]}},
+  balance:{base:'side',per:3.2,A:{k1:[110,142],f1:[106,174],e1:[110,78],a1:[122,90],e2:[90,78],a2:[78,90]},B:{k1:[124,128],f1:[118,160],e1:[114,76],a1:[128,84],e2:[86,76],a2:[72,84]}},
+  balanceChair:{base:'side',per:3.2,props:['chairBack'],A:{k1:[110,142],f1:[106,174],e1:[110,78],a1:[122,90],...ON_CHAIR},B:{k1:[124,128],f1:[118,160],e1:[114,76],a1:[128,84],...ON_CHAIR}},
+  wallplank:{base:'side',per:3,props:['wall'],A:{h:[146,58],n:[134,72],p:[106,124],k1:[93,153],f1:[80,182],k2:[92,153],f2:[79,182],e1:[154,94],a1:[157,68],e2:[152,96],a2:[155,70]},B:{h:[146,58],n:[134,72],p:[106,127],k1:[93,154],f1:[80,182],k2:[92,154],f2:[79,182],e1:[154,94],a1:[157,68],e2:[152,96],a2:[155,70]}},
+  tandem:{base:'side',per:2.4,A:{k1:[108,146],f1:[114,182],k2:[96,146],f2:[94,182],e1:[116,72],a1:[132,72],e2:[84,72],a2:[68,72]},B:{k1:[96,146],f1:[94,182],k2:[108,146],f2:[114,182],e1:[116,72],a1:[132,72],e2:[84,72],a2:[68,72]}},
+  stretch:{base:'side',per:3.4,A:{h:[98,36],e1:[90,76],a1:[80,96],e2:[88,78],a2:[78,98]},B:{h:[146,82],n:[132,92],p:[90,116],k1:[110,148],f1:[124,180],k2:[86,150],f2:[90,182],e1:[130,118],a1:[120,140],e2:[128,120],a2:[118,142]}},
+  sitstand:{base:'seated',per:3,props:['chairSide'],A:{e1:[104,100],a1:[92,104],e2:[102,102],a2:[90,106]},B:{h:[112,36],n:[112,54],p:[110,108],k1:[113,146],f1:[114,182],k2:[112,146],f2:[112,182],e1:[124,70],a1:[110,76],e2:[122,72],a2:[108,78]}},
+  calf:{base:'side',per:2.2,props:['chairBack'],A:{...ON_CHAIR},B:{...shiftY({...POSE_BASE.side,...ON_CHAIR},-7,[]),t1:[111,182],t2:[111,182]}},
+  sideR:{base:'front',per:2.6,props:['chairFront'],A:{e1:[80,82],a1:[70,96]},B:{h:[95,36],n:[96,54],p:[98,108],e1:[80,82],a1:[70,96],k2:[124,142],f2:[144,172]}},
+  seatstretch:{base:'seated',per:3.4,props:['chairSide'],A:{k1:[120,142],f1:[150,166]},B:{h:[118,80],n:[106,94],k1:[120,142],f1:[150,166],e1:[124,118],a1:[142,148],e2:[122,120],a2:[138,150]}}};
+FIG.sideL={...FIG.sideR,mirror:true};
+const PROPS={
+  wall:'M164 24V184',
+  chairBack:'M26 138H66M66 94V138M28 138V184M64 138V184',
+  chairSide:'M50 140H94M50 92V140M52 140V184M92 140V184',
+  chairFront:'M42 92H70V136H42ZM38 138H74M40 138V184M72 138V184'};
+const lerp=(a,b,u)=>[a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u];
+function figMarkup(F,u){
+  const base=POSE_BASE[F.base],A={...base,...F.A},B={...A,...F.B},P={},front=F.base==='front';
+  for(const k in B)P[k]=lerp(A[k]||B[k],B[k],u);
+  const toe=(f,t,side)=>t||(front?[f[0]+side*7,f[1]]:[f[0]+11,f[1]+1]);
+  P.t1=toe(P.f1,P.t1,-1);P.t2=toe(P.f2,P.t2,1);
+  const X=v=>F.mirror?200-v:v,pt=q=>`${X(q[0]).toFixed(1)} ${q[1].toFixed(1)}`,pl=(...q)=>'M'+q.map(pt).join('L');
+  const far=front?'var(--ink)':'var(--muted)';
+  const props=(F.props||[]).map(k=>PROPS[k]).join('');
+  return`<path d="M16 184H184" stroke="var(--line)" stroke-width="3" stroke-linecap="round"/>
+    ${props?`<path d="${F.mirror?mirrorPath(props):props}" fill="none" stroke="var(--line)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`:''}
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+      <path d="${pl(P.n,P.e2,P.a2)}" stroke="${far}"/><path d="${pl(P.p,P.k2,P.f2,P.t2)}" stroke="${far}"/>
+      <path d="${pl(P.n,P.p)}" stroke="var(--ink)" stroke-width="8"/>
+      <path d="${pl(P.p,P.k1,P.f1,P.t1)}" stroke="var(--ink)"/><path d="${pl(P.n,P.e1,P.a1)}" stroke="var(--accent)"/>
+    </g><circle cx="${X(P.h[0]).toFixed(1)}" cy="${P.h[1].toFixed(1)}" r="11" fill="var(--ink)"/>`;
+}
+function mirrorPath(d){ // M/L x y ve H x değerlerini yansıt; V değişmez
+  return d.replace(/([MLH])(\d+(?:\.\d+)?)/g,(m,c,v)=>c+(200-+v));
+}
+let FIGS=[];
+const reduceMotion=()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}};
+function mountFig(el,key,still){if(!el||!FIG[key])return;el.innerHTML=figMarkup(FIG[key],still?0:(reduceMotion()?1:0));if(still)return;const f={el,key,t0:performance.now()};FIGS.push(f);if(FIGS.length===1&&!reduceMotion())requestAnimationFrame(figLoop)}
+function figLoop(now){FIGS=FIGS.filter(f=>document.body.contains(f.el));
+  for(const f of FIGS){const F=FIG[f.key];f.el.innerHTML=figMarkup(F,(1-Math.cos(2*Math.PI*(now-f.t0)/(F.per*1000)))/2)}
+  if(FIGS.length)requestAnimationFrame(figLoop)}
+const figTag=(id,label,cls='')=>`<svg class="fig ${cls}" id="${id}" viewBox="0 0 200 200" role="img" aria-label="${esc(label)} hareketinin çizimi"></svg>`;
+MOVE.std.forEach((m,i)=>m.f=['march','squat','wallpush','bridge','lunge','balance','balance','wallplank','tandem','stretch'][i]);
+MOVE.senior.forEach((m,i)=>m.f=['march','sitstand','wallpush','calf','sideR','sideL','balanceChair','balanceChair','tandem','seatstretch'][i]);
+
+let AC=null;
+function beep(f=880,ms=160){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+ms/1000)}catch(e){}}
+const mmss=t=>Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
+/* Yaş grubuna ve geri bildirime göre ayarlanan program */
+function moveTier(age){
+  return age<50?{name:'50 yaş altı',list:'std',dm:1,rest:15,start:2,note:'Standart kuvvet ve denge seti.'}
+   :age<65?{name:'50-64 yaş',list:'std',dm:.85,rest:15,start:2,note:'Standart set, biraz daha kısa sürelerle.'}
+   :age<75?{name:'65-74 yaş',list:'senior',dm:1,rest:20,start:1,note:'Düşme önleme odaklı, sandalye destekli set.'}
+   :{name:'75 yaş ve üstü',list:'senior',dm:.75,rest:25,start:1,note:'Sandalye destekli set; kısa hareket süreleri, uzun dinlenme. Yerinde yürüme oturarak da yapılabilir.'}}
+const MOVE_MUL=[.8,1,1.2];
+function movePlan(){
+  const T=moveTier(S.profile.age),lv=S.moveLv||T.start,pain=S.movePain||{};
+  const all=MOVE[T.list].map(m=>({...m,s:Math.max(15,Math.round(m.s*T.dm*MOVE_MUL[lv-1]/5)*5)}));
+  return{T,lv,items:all.filter(m=>!pain[m.n]),skipped:all.filter(m=>pain[m.n])};
+}
+const askChoice=(html,opts)=>new Promise(r=>{chk();stage().innerHTML=html+`<div class="row" style="justify-content:center">${opts.map((o,i)=>`<button class="btn ${o.cls||''}" data-c="${i}">${o.t}</button>`).join('')}</div>`;
+  stage().querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>r(+b.dataset.c));stage().querySelector('[data-c]').focus()});
+
+function demoMove(L){return demoLoop(async()=>{const ex=L[1]||L[0];
+  stage().innerHTML=EX+`<p class="eyebrow mono">2/${L.length} · hareket</p><h2 style="font-size:1.6rem">${ex.n}</h2>${figTag('fig-demo',ex.n)}<p class="lead">${ex.d}</p><div class="big mono">${mmss(ex.s)}</div>
+  <div class="row" style="justify-content:center"><span class="btn ghost" style="pointer-events:none">Duraklat</span><span class="btn ghost" style="pointer-events:none">Atla</span><span class="btn danger" style="pointer-events:none">Ağrı yaptı</span></div>
+  <div class="panel ex-note"><p class="small"><b class="fb-good">Nasıl ilerler:</b> Süre geri sayar, son 3 saniyede kısa sinyal çalar. Ardından dinlenme ekranında sıradaki hareket gösterilir. Bir hareket ağrı yaparsa <b>Ağrı yaptı</b>'ya basın: o hareket atlanır ve sonraki rutinlerden çıkarılır.</p><p class="small"><b>Tüm liste:</b> ${L.map(x=>x.n).join(' · ')}</p></div>`;
+  mountFig($('#fig-demo'),ex.f);await sleep(100)})}
+
+async function moveSession(){
+  const {T,lv,items:L,skipped}=movePlan();
+  if(!L.length){await screen(`<h2>Rutinde hareket kalmadı</h2><p class="lead">Tüm hareketler ağrı nedeniyle çıkarılmış. Egzersizler sekmesindeki Hareket rutini kartından geri ekleyebilirsiniz. Ağrılar sürüyorsa bir doktora veya fizyoterapiste danışın.</p>`,'Tamam');return}
+  const total=L.reduce((a,b)=>a+b.s,0)+T.rest*(L.length-1),durs=L.map(x=>x.s);
+  await intro(`<h2>Hareket rutini</h2><p class="lead">${L.length} hareket, yaklaşık ${Math.round(total/60)} dakika.</p>
+    <div class="panel"><h3>Size göre ayar</h3>
+      <p class="small"><b>${T.name}</b> · yoğunluk <span class="mono">${lv}/3</span> · hareket başına <span class="mono">${Math.min(...durs)}-${Math.max(...durs)} sn</span> · aralarda <span class="mono">${T.rest} sn</span> dinlenme.</p>
+      <p class="small muted">${T.note} Her rutinden sonra "Nasıldı?" sorusuna verdiğiniz cevaba göre süreler yaklaşık %20 artar veya azalır. Her hareketi kendi temponuzda, kontrollü yapın; tekrar sayısı değil, düzgün form önemlidir.</p></div>
+    <div class="banner warn"><h3>Ağrı kuralı</h3>
+      <p class="small">Bir hareket <b>ağrı yaparsa hemen bırakın</b> ve <b>Ağrı yaptı</b> düğmesine basın: o hareket atlanır ve sonraki rutinlerden çıkarılır. Hafif kas yorgunluğu ve yanma normaldir; keskin, batıcı ya da eklemde hissedilen ağrı normal değildir.</p>
+      <p class="small"><b>Göğüs ağrısı, baş dönmesi, nefes darlığı veya çarpıntı</b> olursa rutini tamamen bırakın ve oturun. Geçmezse 112'yi arayın.</p>
+      <p class="small">Kalp, tansiyon, eklem veya denge sorununuz varsa yeni bir egzersiz programına başlamadan önce doktorunuza danışın.</p></div>
+    ${skipped.length?`<div class="panel"><p class="small"><b>Ağrı nedeniyle çıkarılanlar:</b> ${skipped.map(x=>x.n).join(', ')}. Egzersizler sekmesinden geri ekleyebilirsiniz.</p></div>`:''}`,'Başla',()=>demoMove(L));
+  const ok=await askChoice(`<h2>Başlamadan önce</h2><p class="lead">Şu an göğüs ağrısı, baş dönmesi, nefes darlığı, ateş ya da yeni başlamış bir eklem veya sırt ağrınız var mı?</p>`,
+    [{t:'Hayır, iyiyim',cls:'accent'},{t:'Evet, var',cls:'ghost'}]);
+  if(ok===1){await screen(`<h2>Bugün dinlenin</h2><p class="lead">Bu belirtilerle egzersiz yapmayın. Belirtiler yeniyse veya geçmiyorsa doktorunuza danışın. Göğüs ağrısı ya da ani nefes darlığı için 112'yi arayın.</p>`,'Tamam');return}
+  try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}
+  beep(660);const painNow=[];let done=0;
+  for(let i=0;i<L.length;i++){
+    for(const phase of(i?['rest','work']:['prep','work'])){
+      chk();const ex=L[i],full=phase==='rest'?T.rest:phase==='prep'?6:ex.s;let left=full,paused=false,skip=false;
+      const resting=phase!=='work';
+      stage().innerHTML=resting?`
+        <div class="phase rest"><span class="pl">${phase==='prep'?'Hazırlık':`Dinlenme · ${i}/${L.length} tamamlandı`}</span>
+          <span class="pt">${phase==='prep'?'Yerinizi alın':'Dinlenin'}</span>
+          <span class="small">${phase==='prep'?'Etrafınızda yeterli boşluk olsun; gerekiyorsa sandalyeyi yanınıza alın.':'Hareket etmeyin. Durun ya da oturun, rahat nefes alın.'}</span></div>
+        <div class="big mono" id="mt">${mmss(left)}</div><div class="tlabel" id="ml">${phase==='prep'?'başlamaya':'dinlenmenin bitmesine'}</div>
+        <div class="bar" style="width:min(100%,420px)"><i id="mb" style="width:0;background:var(--muted)"></i></div>
+        <div style="display:grid;gap:6px;justify-items:center;width:100%;max-width:520px;padding-top:6px;border-top:1px solid var(--line)">
+          <span class="eyebrow">Sıradaki hareket · ${i+1}/${L.length}</span>
+          <h3 style="font-size:1.25rem">${ex.n} <span class="small muted mono">${ex.s} sn</span></h3>
+          ${figTag('fig-run',ex.n)}
+          <p class="small muted">${ex.d}</p></div>
+        <div class="row" style="justify-content:center"><button class="btn ghost" id="mp">Duraklat</button><button class="btn ghost" id="ms">${phase==='prep'?'Hemen başla':'Dinlenmeyi atla'}</button></div>`
+      :`
+        <div class="phase work"><span class="pl">Hareket · ${i+1}/${L.length}</span><span class="pt">${ex.n}</span></div>
+        ${figTag('fig-run',ex.n)}
+        <div class="big mono" id="mt">${mmss(left)}</div><div class="tlabel" id="ml">kalan süre</div>
+        <div class="bar" style="width:min(100%,420px)"><i id="mb" style="width:0"></i></div>
+        <p class="lead">${ex.d}</p>
+        <div class="row" style="justify-content:center"><button class="btn ghost" id="mp">Duraklat</button><button class="btn ghost" id="ms">Atla</button><button class="btn danger" id="mpain">Ağrı yaptı</button></div>
+        <p class="small muted">Ağrı, baş dönmesi veya nefes darlığı olursa durun.</p>`;
+      mountFig($('#fig-run'),ex.f);
+      $('#mp').onclick=()=>{paused=!paused;$('#mp').textContent=paused?'Devam':'Duraklat'};$('#ms').onclick=()=>{skip=true};
+      const pb=$('#mpain');if(pb)pb.onclick=()=>{(S.movePain=S.movePain||{})[ex.n]=localDate();painNow.push(ex.n);save();skip=true};
+      while(left>0&&!skip){await sleep(1000);chk();if(paused)continue;left--;$('#mt').textContent=mmss(left);$('#mb').style.width=(100*(full-left)/full)+'%';
+        if(left<=3&&left>0){beep(440,90);if(resting){const l=$('#ml');l.textContent=`Hazırlanın: ${ex.n} başlıyor`;l.classList.add('ready')}}}
+      if(phase==='work'&&!painNow.includes(ex.n))done++;
+      beep(resting?880:660,220);
+    }
+  }
+  const fb=await askChoice(`<h2>Rutin bitti. Nasıldı?</h2><p class="lead">Cevabınıza göre bir sonraki rutinin süreleri ayarlanır.</p>`,
+    [{t:'Çok kolaydı',cls:'ghost'},{t:'Uygundu',cls:'accent'},{t:'Zorlandım',cls:'ghost'}]);
+  let nlv=lv;if(fb===0)nlv=Math.min(3,lv+1);if(fb===2)nlv=Math.max(1,lv-1);S.moveLv=nlv;
+  S.sessions.push({type:'move',date:localDate(),min:Math.round(total/60),lv,fb:['kolay','uygun','zor'][fb],done,pain:painNow});habitDay().str=true;save();
+  const lvMsg=nlv>lv?`Bir sonraki rutin biraz daha uzun olacak (yoğunluk ${nlv}/3).`:nlv<lv?`Bir sonraki rutin daha kısa olacak (yoğunluk ${nlv}/3).`:fb===0?'Zaten en yüksek yoğunluktasınız. Tempolu yürüyüş sürenizi uzatmayı düşünebilirsiniz.':fb===2?'Zaten en hafif ayardasınız. Zorlanmaya devam ederseniz doktorunuza veya bir fizyoterapiste danışın.':'Yoğunluk aynı kalıyor.';
+  await screen(`<h2>Tebrikler</h2><p class="lead">${lvMsg} Yaşam listesindeki "Kuvvet veya denge" maddesi bugün için işaretlendi.</p>
+    ${painNow.length?`<div class="banner warn"><p class="small"><b>Ağrı bildirdiniz:</b> ${painNow.join(', ')}. Bu hareketler sonraki rutinlerden çıkarıldı. Ağrı birkaç gün içinde geçmezse ya da tekrarlarsa bir doktora veya fizyoterapiste danışın.</p></div>`:''}`,'Bitir');
+}
+
+/* ---------- GAME: Yol Ustası (NeuroRacer tipi çoklu görev) ---------- */
+const SHAPES={gc:['circle','--s-green'],rs:['square','--s-red'],bt:['tri','--s-blue'],rc:['circle','--s-red'],bc:['circle','--s-blue'],gs:['square','--s-green'],gt:['tri','--s-green'],yc:['circle','--s-yellow']};
+const TWO_LV=6;
+function distractorPool(lv){const p=['rs','bt'];if(lv>=2)p.push('rc','bc');if(lv>=3)p.push('gs','gt');if(lv>=5)p.push('yc');return lv>=TWO_LV?p.filter(k=>k!=='rc'):p}
+function shapeSVG(k,sz=34){const[sh,c]=SHAPES[k],f=`fill="var(${c})"`;return`<svg viewBox="-20 -20 40 40" width="${sz}" height="${sz}" aria-hidden="true">${sh==='circle'?`<circle r="16" ${f}/>`:sh==='square'?`<rect x="-15" y="-15" width="30" height="30" rx="3" ${f}/>`:`<path d="M0 -17 L16 13 L-16 13 Z" ${f}/>`}</svg>`}
+function gameParams(lv){return{lv,two:lv>=TWO_LV,speed:150+lv*22,amp:.15+Math.min(lv,8)*.006,rw:Math.max(.30,.46-lv*.015),signMs:Math.max(550,1300-lv*75),gapMin:1.3,gapMax:2.4}}
+const wantKey=(k,two)=>k==='gc'?'g':(two&&k==='rc')?'r':null;   // hangi düğme beklenir
+function gameStage(demo,two){stage().innerHTML=(demo?EX:'')+`<div class="row mono small" style="justify-content:center;gap:16px"><span>Puan <b id="g-sc">0</b></span><span>Seri ×<b id="g-cb">1</b></span><span>Can <b id="g-lv" style="color:var(--bad);letter-spacing:.1em">●●●</b></span><span id="g-tl"></span></div>
+  <canvas id="gcv" class="game-cv" aria-label="Yol Ustası oyun alanı"></canvas>
+  <div class="row" style="justify-content:center;gap:12px">
+    <button class="btn game-btn gb-g" id="g-hit" type="button"${demo?' tabindex="-1"':''}><span class="swatch" style="background:var(--s-green)"></span>Yeşil</button>
+    ${two?`<button class="btn game-btn gb-r" id="g-hit2" type="button"${demo?' tabindex="-1"':''}><span class="swatch" style="background:var(--s-red)"></span>Kırmızı</button>`:''}
+  </div>`}
+
+function runGame(P,pool,dur,demo){return new Promise((res,rej)=>{
+  const cv=$('#gcv'),ctx=cv.getContext('2d'),btnG=$('#g-hit'),btnR=$('#g-hit2');
+  const W=Math.round(cv.getBoundingClientRect().width)||360,H=Math.round(W*1.15),dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.style.height=H+'px';cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.scale(dpr,dpr);
+  const cs=getComputedStyle(document.documentElement),C={};
+  ['--soft','--muted','--surface','--ink','--accent','--good','--bad','--line','--s-green','--s-red','--s-blue','--s-yellow'].forEach(n=>C[n]=cs.getPropertyValue(n).trim()||'#888');
+  const FONT="'Familjen Grotesk', 'Helvetica Neue', Arial, sans-serif";
+  const ph1=Math.random()*6,ph2=Math.random()*6,RW=W*P.rw,carY=H-60,HALF=RW/2-9;
+  const cx=d=>W/2+W*P.amp*Math.sin(d*.0045+ph1)+W*P.amp*.6*Math.sin(d*.011+ph2);
+  let s=0,carX=cx(H-carY),tx=null,dir=0,drag=false,score=0,drivePts=0,combo=1,onT=0,totT=0,centerSum=0;
+  let hits=0,misses=0,fa=0,targets=0,nonT=0,rts=[];
+  let sign=null,nextSign=demo?1:1.5,elapsed=demo?0:-3,pops=[],carPops=[],secT=0,secPts=0,last=null,si=0;
+  let touched=false,crashes=0,crashStreak=0,onRun=0,wasOn=true,crashedOut=false;
+  const penal=n=>{score-=n;if(score+drivePts<0)score=-drivePts};
+  const seq=demo?(P.two?['gc',pool[0],'rc','gc']:['gc',pool[0],'gc',pool[1]||pool[0]]):null;
+  const pop=(t,c)=>pops.push({t,c,y:62,a:1});
+  const hud=()=>{$('#g-sc').textContent=Math.max(0,Math.floor(score+drivePts));$('#g-cb').textContent=combo;$('#g-lv').textContent='●'.repeat(3-crashStreak)+'○'.repeat(crashStreak);$('#g-tl').textContent=mmss(Math.max(0,Math.ceil(dur-Math.max(0,elapsed))))};
+  const endSign=()=>{sign=null;nextSign=elapsed+P.gapMin+Math.random()*(P.gapMax-P.gapMin)};
+  function respond(key){
+    if(elapsed<0)return;const b=key==='r'?btnR:btnG;if(b){b.classList.add('pressed');setTimeout(()=>b.classList.remove('pressed'),140)}
+    if(sign&&!sign.res){
+      const want=wantKey(sign.k,P.two),rt=elapsed-sign.t0;
+      if(want===key){hits++;rts.push(rt);const bonus=Math.round(10*Math.max(0,1-rt/sign.dur));
+        score+=10*combo+bonus;pop(`+${10*combo}${bonus?' +'+bonus+' hız':''}`,C['--good']);combo=Math.min(5,combo+1);
+        sign.res='ok';sign.resT=elapsed}
+      else{fa++;penal(15);combo=1;pop('✕ −15',C['--bad']);sign.res='bad';sign.resT=elapsed;
+        if(want)misses++}
+    }else if(!sign){fa++;penal(10);combo=1;pop('✕ −10',C['--bad'])}
+  }
+  const posX=e=>{const r=cv.getBoundingClientRect();return(e.clientX-r.left)*(r.width?W/r.width:1)};
+  const pd=e=>{drag=true;touched=true;tx=posX(e);try{cv.setPointerCapture(e.pointerId)}catch(_){}},pm=e=>{if(drag||e.pointerType==='mouse')tx=posX(e)},pu=()=>{drag=false};
+  const bg=e=>{e.preventDefault();respond('g')},br=e=>{e.preventDefault();respond('r')};
+  const kd=e=>{const k=e.key.toLowerCase();
+    if(e.key==='ArrowLeft'){dir=-1;tx=null;e.preventDefault()}else if(e.key==='ArrowRight'){dir=1;tx=null;e.preventDefault()}
+    else if(e.key===' '||k==='z'){e.preventDefault();if(!e.repeat)respond('g')}
+    else if(P.two&&k==='x'){e.preventDefault();if(!e.repeat)respond('r')}};
+  const ku=e=>{if((e.key==='ArrowLeft'&&dir<0)||(e.key==='ArrowRight'&&dir>0))dir=0};
+  if(!demo){cv.addEventListener('pointerdown',pd);cv.addEventListener('pointermove',pm);cv.addEventListener('pointerup',pu);cv.addEventListener('pointercancel',pu);
+    btnG.addEventListener('pointerdown',bg);if(btnR)btnR.addEventListener('pointerdown',br);document.addEventListener('keydown',kd);document.addEventListener('keyup',ku)}
+  const cleanup=()=>{cv.removeEventListener('pointerdown',pd);cv.removeEventListener('pointermove',pm);btnG.removeEventListener('pointerdown',bg);if(btnR)btnR.removeEventListener('pointerdown',br);document.removeEventListener('keydown',kd);document.removeEventListener('keyup',ku)};
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+  function shape(k,x,y,r){const[sh,c]=SHAPES[k];ctx.fillStyle=C[c];ctx.beginPath();
+    if(sh==='circle')ctx.arc(x,y,r,0,Math.PI*2);else if(sh==='square')ctx.rect(x-r*.9,y-r*.9,r*1.8,r*1.8);else{ctx.moveTo(x,y-r*1.05);ctx.lineTo(x+r,y+r*.8);ctx.lineTo(x-r,y+r*.8);ctx.closePath()}ctx.fill()}
+  function label(t,x,y,size,color,align='center'){ctx.font=`800 ${size}px ${FONT}`;ctx.textAlign=align;ctx.lineJoin='round';ctx.lineWidth=Math.max(4,size/4.5);ctx.strokeStyle=C['--surface'];ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y)}
+  const SY=98,SH=48;
+  function strip(run){
+    ctx.globalAlpha=.7;ctx.fillStyle=C['--surface'];rr(8,SY,W-16,SH,SH/2);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C['--line'];ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle=C['--muted'];ctx.font=`600 14px ${FONT}`;ctx.textAlign='left';ctx.fillText('◀',20,SY+SH/2+5);ctx.textAlign='right';ctx.fillText('▶',W-20,SY+SH/2+5);
+    const fx=tx===null?carX:Math.max(26,Math.min(W-26,tx)),act=drag||demo;
+    ctx.setLineDash([4,6]);ctx.strokeStyle=C['--accent'];ctx.globalAlpha=.35;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(fx,SY+SH);ctx.lineTo(carX,carY-22);ctx.stroke();ctx.setLineDash([]);
+    ctx.globalAlpha=act?.9:.5;ctx.fillStyle=C['--accent'];ctx.beginPath();ctx.arc(fx,SY+SH/2,19,0,Math.PI*2);ctx.globalAlpha*=.3;ctx.fill();
+    ctx.globalAlpha=act?.95:.55;ctx.strokeStyle=C['--accent'];ctx.lineWidth=3;ctx.beginPath();ctx.arc(fx,SY+SH/2,19,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
+    if(!touched&&!demo)label('Parmağınızı bu şeride koyun',W/2,SY+SH+22,15,C['--ink']);
+    ctx.textAlign='center';
+  }
+  function mark(ok,x,y){ctx.strokeStyle=ok?C['--good']:C['--bad'];ctx.lineWidth=7;ctx.lineCap='round';ctx.beginPath();
+    if(ok){ctx.moveTo(x-14,y);ctx.lineTo(x-4,y+11);ctx.lineTo(x+16,y-12)}else{ctx.moveTo(x-12,y-12);ctx.lineTo(x+12,y+12);ctx.moveTo(x+12,y-12);ctx.lineTo(x-12,y+12)}ctx.stroke()}
+  function draw(run,on,dt){
+    ctx.fillStyle=C['--soft'];ctx.fillRect(0,0,W,H);
+    ctx.fillStyle=C['--good'];ctx.globalAlpha=.28;const base=Math.floor(s/60);
+    for(let k=-1;k<H/60+2;k++){const n=base+k,wd=n*60,y=H-(wd-s),h=Math.abs(Math.sin(n*12.9898)*43758.5453)%1,c=cx(wd);
+      ctx.beginPath();ctx.arc(c-RW/2-18-h*40,y,8+h*6,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(c+RW/2+18+((h*7)%1)*40,y+25,8+((h*3)%1)*6,0,Math.PI*2);ctx.fill()}
+    ctx.globalAlpha=1;ctx.fillStyle=C['--muted'];ctx.beginPath();
+    for(let y=-10;y<=H+10;y+=10)ctx.lineTo(cx(s+H-y)-RW/2,y);
+    for(let y=H+10;y>=-10;y-=10)ctx.lineTo(cx(s+H-y)+RW/2,y);
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle=C['--surface'];for(let y=0;y<H;y+=6){const d=s+H-y;if(Math.floor(d/36)%2===0)ctx.fillRect(cx(d)-2,y,4,6)}
+    const sh=(run&&!on)?(Math.random()-.5)*3:0;
+    ctx.save();ctx.translate(carX+sh,carY);ctx.fillStyle=C['--accent'];rr(-11,-18,22,36,5);ctx.fill();
+    ctx.fillStyle=C['--ink'];ctx.globalAlpha=.7;rr(-8,-10,16,8,2);ctx.fill();rr(-8,6,16,6,2);ctx.fill();ctx.globalAlpha=1;ctx.restore();
+    // tabela + kalan süre halkası
+    ctx.fillStyle=C['--surface'];ctx.strokeStyle=C['--line'];ctx.lineWidth=2;rr(W/2-46,10,92,78,12);ctx.fill();ctx.stroke();
+    if(sign){
+      if(sign.res){mark(sign.res==='ok',W/2,49)}
+      else{shape(sign.k,W/2,49,22);const left=Math.max(0,1-(elapsed-sign.t0)/sign.dur);
+        ctx.strokeStyle=C['--ink'];ctx.globalAlpha=.55;ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.arc(W/2,49,32,-Math.PI/2,-Math.PI/2+Math.PI*2*left);ctx.stroke();ctx.globalAlpha=1}}
+    if(run&&!on){ctx.strokeStyle=C['--bad'];ctx.lineWidth=6;ctx.strokeRect(3,3,W-6,H-6)}
+    strip(run);
+    for(const p of pops){ctx.globalAlpha=Math.max(0,Math.min(1,p.a));label(p.t,W/2+56,p.y,24,p.c,'left');p.y-=dt*14;p.a-=dt*.75}
+    pops=pops.filter(p=>p.a>0);
+    for(const p of carPops){ctx.globalAlpha=Math.max(0,Math.min(1,p.a));const x=Math.max(40,Math.min(W-40,p.x+(p.crash?0:34)));label(p.t,x,p.y,p.crash?24:(p.big?30:24),p.c);p.y-=dt*34;p.a-=dt*1.1}
+    carPops=carPops.filter(p=>p.a>0);ctx.globalAlpha=1;ctx.textAlign='center';
+    if(!run){ctx.fillStyle=C['--surface'];ctx.beginPath();ctx.arc(W/2,H/2,W*.13,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=C['--ink'];ctx.font=`700 ${Math.round(W*.15)}px ${FONT}`;ctx.textBaseline='middle';ctx.fillText(Math.ceil(-elapsed),W/2,H/2+2);ctx.textBaseline='alphabetic'}
+  }
+  function frame(now){
+    if(ABORT){cleanup();return rej(new Error('abort'))}
+    if(last===null)last=now;const dt=Math.min(.05,(now-last)/1000);last=now;elapsed+=dt;
+    const run=elapsed>=0,prog=Math.max(0,elapsed)/dur,carD=s+H-carY,off=Math.abs(carX-cx(carD)),on=off<HALF;
+    s+=P.speed*(1+.15*prog)*(run?(on?1:.55):.4)*dt;
+    if(demo)tx=cx(s+H-carY+30);
+    if(tx!==null)carX+=(tx-carX)*Math.min(1,dt*12);
+    carX=Math.max(12,Math.min(W-12,carX+dir*W*.85*dt));
+    if(run&&!demo){
+      if(!on&&wasOn&&onRun>=.5){crashes++;crashStreak++;penal(20);carPops.push({t:'Çarpma −20',c:C['--bad'],x:carX,y:carY-40,a:1.5,crash:true});if(crashStreak>=3)crashedOut=true}
+      onRun=on?onRun+dt:0;wasOn=on;if(onRun>=10)crashStreak=0}
+    if(run){totT+=dt;
+      if(on){const cen=1-off/HALF;onT+=dt;centerSum+=cen*dt;drivePts+=dt*(1+2*cen)}   // ortaya yakınlık: saniyede 1-3 puan
+      secT+=dt;if(secT>=1){const g=Math.round(drivePts-secPts);secPts=drivePts;secT-=1;
+        if(g>0)carPops.push({t:'+'+g,c:g>=3?C['--good']:C['--ink'],x:carX,y:carY-14,a:1.3,big:g>=3})}
+      if(!sign&&elapsed>=nextSign){let k;
+        if(seq)k=seq[si++%seq.length];
+        else{const r=Math.random();k=r<(P.two?.3:.4)?'gc':(P.two&&r<.5)?'rc':pool[rnd(0,pool.length-1)]}
+        sign={k,t0:elapsed,dur:P.signMs/1000,res:null};wantKey(k,P.two)?targets++:nonT++}
+      if(sign){
+        if(demo&&!sign.res&&wantKey(sign.k,P.two)&&elapsed>sign.t0+.45)respond(wantKey(sign.k,P.two));
+        if(sign.res&&elapsed>sign.resT+.28)endSign();                 // onay kısa görünür, sonra kaybolur
+        else if(!sign.res&&elapsed>sign.t0+sign.dur){
+          if(wantKey(sign.k,P.two)){misses++;combo=1;pop('Kaçtı',C['--bad'])}else if(demo)pop('Basılmadı ✓',C['--good']);
+          endSign()}}}
+    draw(run,on,dt);hud();
+    if(elapsed>=dur||crashedOut){cleanup();res({crashes,crashedOut,score:Math.max(0,Math.floor(score+drivePts)),drive:totT?onT/totT:0,center:totT?centerSum/totT:0,hits,misses,fa,targets,nonT,rt:rts.length?Math.round(1000*rts.reduce((a,b)=>a+b,0)/rts.length):null})}
+    else requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})}
+
+function levelGuide(lv){
+  const P=gameParams(lv);
+  const rows=[[1,'Yeşil daireye bas; kırmızı kare ve mavi üçgene basma.'],[2,'Kırmızı ve mavi daireler eklenir: şekil aynı, renk farklı.'],[3,'Yeşil kare ve yeşil üçgen eklenir: renk aynı, şekil farklı.'],[5,'Sarı daire eklenir.'],[TWO_LV,'İkinci düğme: kırmızı daire görünce <b>Kırmızı</b>\'ya bas. Diğer şekillere yine basma.']];
+  return`<div class="tbl"><table><thead><tr><th>Seviye</th><th>Yeni kural</th></tr></thead><tbody>${rows.map(([l,t])=>`<tr${l<=lv&&(rows.find(r=>r[0]>l)||[99])[0]>lv?' style="font-weight:600"':''}><td class="mono">${l}${l===TWO_LV?'+':''}</td><td style="white-space:normal">${t}</td></tr>`).join('')}</tbody></table></div>
+    <p class="small muted">Her seviyede ayrıca yol hızlanır ve daralır, tabela süresi kısalır (seviye 1'de 1300 ms, en az 550 ms). Sizin seviyenizde tabela <span class="mono">${P.signMs} ms</span> görünür.</p>`;
+}
+
+function demoGame(lv){return demoLoop(async()=>{
+  const P=gameParams(lv),pool=distractorPool(lv);gameStage(true,P.two);
+  await runGame({...P,signMs:1300,gapMin:.8,gapMax:1.2},pool,P.two?13:11,true);
+  const d=document.createElement('div');d.className='panel ex-note';
+  const tg=`<div style="display:grid;justify-items:center;gap:4px">${shapeSVG('gc',44)}<span class="small fb-good"><b>Yeşil</b></span></div>`+(P.two?`<div style="display:grid;justify-items:center;gap:4px">${shapeSVG('rc',44)}<span class="small fb-good"><b>Kırmızı</b></span></div>`:'');
+  d.innerHTML=`<div class="row" style="gap:14px;justify-content:center">${tg}${pool.map(k=>`<div style="display:grid;justify-items:center;gap:4px">${shapeSVG(k,36)}<span class="small fb-bad">Basma</span></div>`).join('')}</div>
+    <p class="small"><b class="fb-good">Ne gördünüz:</b> Şeritteki halka parmağın yerini gösteriyor; araba onun hizasını izleyerek yolun ortasına yakın sürüldü. Siz parmağınızı bu şeritte kaydıracaksınız. Hedef şekil çıkınca düğmeye basıldı, şekil yeşil ✓'ye dönüp kayboldu. Tabelanın etrafındaki halka kalan süreyi gösterir; halka bitmeden basmalısınız. Hızlı basış ek puan getirir.</p>`;
+  stage().appendChild(d);
+})}
+
+async function gameSession(){
+  const G=S.game||(S.game={lv:1,best:0}),lv=G.lv,P=gameParams(lv),pool=distractorPool(lv),DUR=150;
+  await intro(`<h2>Yol Ustası · Seviye ${lv}</h2><p class="lead">Aynı anda iki iş: arabayı virajlı yolda, mümkün olduğunca ortada tutun ve yukarıdaki tabelada <b>yeşil daire</b> belirdiğinde ${P.two?'<b>Yeşil</b>\'e, <b>kırmızı daire</b> belirdiğinde <b>Kırmızı</b>\'ya':'düğmeye'} basın. Diğer şekillere basmayın.</p>
+    <div class="panel"><h3>Kurallar ve puan</h3><ul style="margin:0;padding-left:18px;display:grid;gap:6px">
+      <li><b>Sürmek:</b> parmağınızı tabelanın hemen altındaki <b>direksiyon şeridine</b> koyup sağa sola kaydırın; araba parmağınızın hizasını izler. Şeritteki halka parmağınızın yerini gösterir. Böylece parmağınız arabayı ve puanları kapatmaz. Klavyede ← →. İki elle oynayın: bir el şeritte, diğeri düğmede.</li>
+      <li><b>Süre sınırı:</b> tabelanın etrafındaki halka bitmeden basmalısınız. Doğru basınca şekil ✓ olup kaybolur.</li>
+      <li><b>Puan:</b> doğru basış 10 × seri; hızlı basış +10'a kadar bonus. Yanlış şekle ya da yanlış düğmeye basmak <b>−15</b>, tabela yokken basmak <b>−10</b>; ikisi de seriyi sıfırlar.</li>
+      <li><b>Sürüş puanı:</b> yolda kalmak saniyede +1, tam orta çizgide kalmak saniyede +3. Her saniye kazandığınız puan arabanın yanında görünür.</li>
+      <li><b>Kenara çarpma:</b> yoldan her çıkış <b>−20</b> ve bir can götürür. 3 canınız var; 10 saniye yoldan çıkmadan sürerseniz canlar yenilenir. Üst üste 3 çarpmada oyun biter.</li>
+      <li>Klavye: Boşluk veya Z = Yeşil${P.two?', X = Kırmızı':''}.</li></ul></div>
+    <div class="panel"><h3>Seviyeler</h3>${levelGuide(lv)}<p class="small muted">Seviye atlamak için: yolda %85, hedeflerde %80 başarı ve en fazla 3 yanlış basış. Rekorunuz: <span class="mono">${G.best||0}</span> puan.</p></div>`,'Başla',()=>demoGame(lv));
+  try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}
+  gameStage(false,P.two);
+  const r=await runGame(P,pool,DUR,false);
+  const hr=r.targets?r.hits/r.targets:0,d=r.drive;
+  const stars=r.crashedOut?1:(d>=.85&&hr>=.85&&r.fa<=2)?3:(d>=.7&&hr>=.7)?2:1;
+  let msg='Seviye aynı kalıyor.';
+  if(r.crashedOut){msg='Üst üste 3 kez yoldan çıktınız, oyun erken bitti. Seviye aynı kalıyor.'}
+  else if(d>=.85&&hr>=.8&&r.fa<=3&&lv<10){G.lv=lv+1;msg=`Seviye ${lv+1}'e yükseldiniz.${lv+1===TWO_LV?' Bu seviyede ikinci düğme devreye giriyor.':''}`}
+  else if((d<.6||hr<.5)&&lv>1){G.lv=lv-1;msg=`Bir sonraki oyun seviye ${lv-1}'de.`}
+  const rec=r.score>(G.best||0);if(rec)G.best=r.score;
+  S.sessions.push({type:'game',date:localDate(),score:r.score,lv,drive:Math.round(d*100),center:Math.round(r.center*100),hit:Math.round(hr*100),fa:r.fa,rt:r.rt,stars,crashes:r.crashes,out:r.crashedOut});save();
+  await screen(`<div class="stars" aria-label="${stars} yıldız">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</div><h2>${r.crashedOut?'Oyun bitti · ':''}${r.score} puan${rec?' · yeni rekor':''}</h2>
+    <div class="result-grid"><div class="panel"><span class="eyebrow">Yolda kalma</span><span class="v">${Math.round(d*100)}%</span><span class="small muted">ortaya yakınlık ${Math.round(r.center*100)}% · ${r.crashes} çarpma</span></div>
+    <div class="panel"><span class="eyebrow">Hedefler</span><span class="v">${r.hits}/${r.targets}</span><span class="small muted">${r.rt?'ort. tepki '+r.rt+' ms':'yakalandı'}</span></div>
+    <div class="panel"><span class="eyebrow">Yanlış basış</span><span class="v">${r.fa}</span></div></div>
+    <p class="lead">${msg} Çoklu görevde asıl hedef, iki işi birlikte yaparken her birindeki performans kaybını azaltmak.</p>`,'Bitir');
+}
+
+/* ---------- REASONING (ACTIVE-style series) ---------- */
+const ALPHA='ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ';
+function genSeries(level){
+  let seq,kind='num';const p=rnd(0,2);
+  if(level<=1){if(p<2){const a=rnd(1,20),k=rnd(2,9);seq=[0,1,2,3,4,5].map(i=>a+i*k)}else{kind='let';const a=rnd(0,8),k=rnd(1,2);seq=[0,1,2,3,4,5].map(i=>a+i*k)}}
+  else if(level===2){if(p===0){const a=rnd(1,5);seq=[0,1,2,3,4,5].map(i=>a*2**i)}
+    else if(p===1){const a=rnd(60,99),k=rnd(3,9);seq=[0,1,2,3,4,5].map(i=>a-i*k)}
+    else{const a=rnd(1,9),b=rnd(20,40),k=rnd(2,5),m=rnd(2,5);seq=[0,1,2,3,4,5,6].map(i=>i%2?b+((i-1)/2)*m:a+(i/2)*k)}}
+  else if(level===3){if(p===0){let v=rnd(1,10);const d=rnd(1,3);seq=[];for(let i=0;i<6;i++){seq.push(v);v+=d+i}}
+    else if(p===1){let v=rnd(10,30);const a=rnd(4,9),b=rnd(1,3);seq=[];for(let i=0;i<7;i++){seq.push(v);v+=i%2?-b:a}}
+    else{kind='let';const a=rnd(0,4),k=rnd(2,3);seq=[0,1,2,3,4,5].map(i=>a+i*k)}}
+  else{if(p===0){let v=rnd(1,4);seq=[];for(let i=0;i<7;i++){seq.push(v);v=i%2?v+1:v*2;}}
+    else if(p===1){let a=rnd(1,4),b=rnd(2,6);seq=[a,b];while(seq.length<7)seq.push(seq[seq.length-1]+seq[seq.length-2])}
+    else{kind='let';const a=rnd(0,3);seq=[0,1,3,6,10,15].map(x=>a+x)}}
+  const ans=seq.pop();const diff=Math.abs(ans-seq[seq.length-1])||1;
+  const pool=[ans+1,ans-1,ans+diff,ans-diff,ans+2,ans-2,ans+diff+1].filter(x=>x!==ans&&x>=0&&(kind==='num'||x<ALPHA.length));
+  const opts=shuffle([ans,...shuffle([...new Set(pool)]).slice(0,3)]);
+  const f=v=>kind==='let'?ALPHA[v]:String(v);
+  return{shown:seq.map(f),ans:f(ans),opts:opts.map(f)};
+}
+function demoReason(){return demoLoop(async()=>{
+  const ex=[{s:'3  7  11  15  ?',o:['17','18','19','21'],a:'19',w:'Her adımda 4 artıyor: 15 + 4 = 19.'},
+            {s:'A  C  D  F  ?',o:['G','Ğ','H','E'],a:'Ğ',w:'Her adımda bir harf atlanıyor: A (B) C (Ç) D (E) F (G) Ğ. Türk alfabesinde Ç, Ğ, I, İ, Ö, Ş, Ü de sayılır.'}];
+  stage().innerHTML=EX+ex.map(e=>`<div class="series">${e.s}</div><div class="opts four">${e.o.map(o=>`<div class="opt ${o===e.a?'hl':''}">${o}</div>`).join('')}</div><div class="panel ex-note"><p class="small"><b class="fb-good">Cevap: ${e.a}.</b> ${e.w}</p></div>`).join('');
+})}
+async function reasonSession(){
+  const L=S.reasonLevel||1,N=10;let ok=0;
+  await intro(`<h2>Dizi Bulmaca · Seviye ${L}</h2><p class="lead">Her dizide bir kural var: sabit artış, çarpma, iki iç içe dizi ya da artan farklar. Kuralı bulun ve sıradaki öğeyi seçin. Harf dizileri Türk alfabesini izler.</p>`,'Başla',demoReason);
+  for(let i=0;i<N;i++){chk();const q=genSeries(L);
+    const pick=await new Promise(r=>{stage().innerHTML=`<p class="eyebrow mono">${i+1}/${N}</p><div class="series">${q.shown.join('  ')}  ?</div>
+      <div class="opts four">${q.opts.map(o=>`<button class="opt" data-v="${o}">${o}</button>`).join('')}</div><div id="fb" style="min-height:2em"></div>`;
+      stage().querySelector('.opts').onclick=e=>{const b=e.target.closest('button');if(b)r(b.dataset.v)}});
+    const good=pick===q.ans;if(good)ok++;
+    $('#fb').innerHTML=`<p class="${good?'fb-good':'fb-bad'}" style="font-weight:700">${good?'Doğru':'Doğru cevap: '+q.ans}</p>`;
+    stage().querySelector('.opts').onclick=null;await sleep(good?700:1600);
+  }
+  let msg='Seviye aynı kalıyor.';
+  if(ok>=8&&L<4){S.reasonLevel=L+1;msg=`Seviye ${L+1}'e yükseldiniz.`}else if(ok<=4&&L>1){S.reasonLevel=L-1;msg=`Bir sonraki seans seviye ${L-1}'de.`}
+  S.sessions.push({type:'reason',date:localDate(),level:L,score:ok});save();
+  await screen(`<h2>${ok}/${N} doğru</h2><p class="lead">${msg}</p>`,'Bitir');
+}
+
+/* ---------- TRAIN tab ---------- */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-unpain]');if(!b)return;if(S.movePain)delete S.movePain[b.dataset.unpain];save();renderTrain()});
+function renderTrain(){
+  const sp=S.sessions.filter(s=>s.type==='speed'),lastSp=sp[sp.length-1],nv=nextVariant();
+  const mem=S.sessions.filter(s=>s.type==='memory'),mv=S.sessions.filter(s=>s.type==='move');
+  const card=(title,chip,cls,body,stats,btns)=>`<div class="panel"><div class="row"><h2>${title}</h2><span class="chip ${cls}"><span class="dot"></span>${chip}</span></div><p class="small">${body}</p>${stats}<div class="row">${btns}</div></div>`;
+  $('#v-train').innerHTML=`
+    <div style="display:grid;gap:8px"><span class="eyebrow">Egzersizler</span><h1>Antrenman kütüphanesi</h1>
+    <p class="lead">Dört egzersiz, haftalık takvime dağıtılmış durumda. Bilişsel egzersizler başarınıza göre zorlaşır; kanıt, uyarlanır zorluğun önemli olduğunu gösteriyor. Hız antrenmanında ACTIVE protokolüne benzer şekilde ilk 5-6 hafta düzenli devam edip sonra takviye seanslarını sürdürün.</p></div>
+    <div class="grid2">
+      ${card('Çift Odak','Birincil · en güçlü kanıt','good','Merkezdeki nesneyi tanırken çevredeki hedefi yakalama. Görsel işlem hızını ve dikkat alanını eğitir. Uzun dönem takipte en güçlü sonucu veren antrenman türü. İki versiyonu sırayla gelir: Araçlar ve Yüzler.',
+        `<div class="stat"><span class="small muted">Şu anki gösterim süresi</span><span class="v">${Math.round(S.speedDur||startDur(S.profile.age))} ms</span></div><p class="small muted">Seans: <span class="mono">${sp.length}</span>${lastSp?` · son eşik <span class="mono">${lastSp.thr} ms</span>`:''} · sıradaki: ${VAR[nv].name}${S.lastHz?` · ekran ${S.lastHz} Hz`:''}</p>`,
+        `<button class="btn ${nv==='arac'?'accent':'ghost'}" data-act="speedA">Araçlar</button><button class="btn ${nv==='yuz'?'accent':'ghost'}" data-act="speedB">Yüzler</button>`)}
+      ${card('Hafıza Sarayı','Bellek performansı','warn','Yer yöntemi, gruplama ve hikâye zinciri tekniklerini sırayla öğretir ve uygulatır. ACTIVE\'nin bellek kolu gibi strateji öğretimine dayanır; günlük hatırlamaya doğrudan aktarılabilir.',
+        `<div class="stat"><span class="small muted">Seviye</span><span class="v">${S.memLevel||1} / 4 · ${[6,8,10,12][(S.memLevel||1)-1]} kelime</span></div><p class="small muted">Seans: <span class="mono">${mem.length}</span> · sıradaki teknik: ${TECH[memTech()].name}</p>`,
+        `<button class="btn" data-act="memory">Seansa başla</button>`)}
+      ${card('Dizi Bulmaca','Akıl yürütme','warn','Sayı ve harf dizilerinde kuralı bulma. ACTIVE\'nin akıl yürütme koluyla aynı beceri türü; kazanım 10 yıl sürdü.',
+        `<div class="stat"><span class="small muted">Seviye</span><span class="v">${S.reasonLevel||1} / 4</span></div><p class="small muted">Seans: <span class="mono">${S.sessions.filter(s=>s.type==='reason').length}</span></p>`,
+        `<button class="btn" data-act="reason">Seansa başla</button>`)}
+      ${(()=>{const{T,lv,skipped}=movePlan();return card('Hareket rutini','Fiziksel aktivite · DSÖ','good',`Zamanlayıcılı, sesli geçişli, figürlü kuvvet ve denge seti. ${T.name} için ayarlı: ${T.note} Fiziksel aktivite, DSÖ\'nün bilişsel gerileme riskini azaltmak için önerdiği temel müdahale.`,
+        `<div class="stat"><span class="small muted">Yoğunluk</span><span class="v">${lv} / 3</span></div><p class="small muted">Seans: <span class="mono">${mv.length}</span> · bu hafta ${weekCount('move')}/3</p>
+        ${skipped.length?`<div class="banner warn"><p class="small"><b>Ağrı nedeniyle çıkarılan:</b></p>${skipped.map(x=>`<div class="row" style="justify-content:space-between"><span class="small">${x.n}</span><button class="btn ghost" data-unpain="${esc(x.n)}" style="min-height:36px;padding:4px 12px">Geri ekle</button></div>`).join('')}</div>`:''}`,
+        `<button class="btn" data-act="move">Rutine başla</button>`)})()}
+      ${card('Yol Ustası','Oyun · çoklu görev','warn','Virajlı yolda araba sürerken tabelalardaki yeşil daireyi yakalama. NeuroRacer çalışmasındaki çoklu görev oyununa dayanır: dikkat bölme, ketleme ve sürdürülebilir dikkat. İki görevde başarıya göre zorlaşır.',
+        `<div class="stat"><span class="small muted">Seviye</span><span class="v">${(S.game&&S.game.lv)||1} / 10</span></div><p class="small muted">Oyun: <span class="mono">${S.sessions.filter(s=>s.type==='game').length}</span> · rekor <span class="mono">${(S.game&&S.game.best)||0}</span></p>`,
+        `<button class="btn accent" data-act="game">Oyna</button>`)}
+    </div>
+    <div class="banner"><h3>Ekran dışı bilişsel uyarım da sayılır</h3><p class="small">Yeni bir dil, enstrüman ya da beceri öğrenmek; satranç veya briç gibi sosyal bir oyunla birleştiğinde hem bilişsel hem sosyal risk faktörüne aynı anda dokunur.</p></div>`;
+}
+
+/* ---------- LIFE tab ---------- */
+function weekSum(k,asMin){let s=0;for(let i=0;i<7;i++){const v=(S.habits[daysAgo(i)]||{})[k];s+=asMin?(+v||0):(v?1:0)}return s}
+function renderLife(){
+  const hd=habitDay();
+  const aero=weekSum('aero',true),strD=weekSum('str'),socD=weekSum('soc');
+  const bar=(v,g)=>`<div class="bar"><i style="width:${Math.min(100,100*v/g)}%"></i></div>`;
+  const stages=['Erken yaşam','Orta yaş','Geç yaşam'];
+  const flagged=RISKS.filter(r=>S.risk[r.k]);
+  $('#v-life').innerHTML=`
+    <div style="display:grid;gap:8px"><span class="eyebrow">Yaşam</span><h1>Günlük alışkanlıklar</h1>
+    <p class="lead">US POINTER'daki dört alan: fiziksel aktivite, beslenme, bilişsel-sosyal uyarım ve sağlık takibi. Yapılandırılmış takip, kendi başına denemeye göre daha fazla bilişsel kazanç sağladı.</p></div>
+    <div class="grid2">
+      <div class="panel"><h2>Bugün</h2><div>
+        ${HABITS.map(h=>h.min?`<label class="check" for="h-${h.k}"><span class="mono" style="width:22px;text-align:center">◷</span><span><b>${h.t}</b><br><span class="small muted">${h.d}</span><br><span class="row" style="margin-top:6px"><input id="h-${h.k}" type="number" min="0" max="600" step="5" value="${hd[h.k]||''}" placeholder="0" style="width:110px" data-hk="${h.k}"> <span class="small muted">dakika</span></span></span></label>`
+          :`<label class="check" for="h-${h.k}"><input id="h-${h.k}" type="checkbox" data-hk="${h.k}" ${hd[h.k]?'checked':''}><span><b>${h.t}</b>${h.d?`<br><span class="small muted">${h.d}</span>`:''}</span></label>`).join('')}
+      </div></div>
+      <div class="panel" style="align-content:start"><h2>Son 7 gün</h2>
+        <div class="stat"><div class="row" style="justify-content:space-between"><span>Aerobik</span><span class="v">${aero} / 150 dk</span></div>${bar(aero,150)}</div>
+        <div class="stat"><div class="row" style="justify-content:space-between"><span>Kuvvet / denge</span><span class="v">${strD} / 2 gün</span></div>${bar(strD,2)}</div>
+        <div class="stat"><div class="row" style="justify-content:space-between"><span>Sosyal temas</span><span class="v">${socD} / 4 gün</span></div>${bar(socD,4)}</div>
+        <p class="small muted">Hedefler DSÖ fiziksel aktivite önerisine ve POINTER programına dayanır. Yeni egzersize başlamadan önce kronik hastalığınız varsa doktorunuza danışın.</p>
+      </div>
+    </div>
+    <div class="panel"><h2>Risk faktörü kontrolü</h2>
+      <p class="small muted">Sizin için geçerli olanları işaretleyin. Lancet Komisyonu 2024'ün 14 faktörü, yaşam evresine göre.</p>
+      ${stages.map(st=>`<div><p class="eyebrow" style="margin:10px 0 2px">${st}</p>${RISKS.filter(r=>r.stage===st).map(r=>`<label class="check" for="r-${r.k}"><input id="r-${r.k}" type="checkbox" data-rk="${r.k}" ${S.risk[r.k]?'checked':''}><span><b>${r.t}</b>${S.risk[r.k]?`<br><span class="small">${r.a}</span>`:''}</span></label>`).join('')}</div>`).join('')}
+      ${flagged.length?`<div class="banner warn"><h3>${flagged.length} alanda iyileştirme fırsatı</h3><p class="small">Bunları bir sonraki doktor kontrolünüzde konuşmak için not alın. Tansiyon, kolesterol, işitme ve görme ölçümleri birinci basamakta yapılabilir.</p></div>`:''}
+    </div>`;
+  $('#v-life').querySelectorAll('[data-hk]').forEach(el=>el.addEventListener('change',()=>{const d=habitDay();d[el.dataset.hk]=el.type==='checkbox'?el.checked:Math.max(0,+el.value||0);save();renderLife()}));
+  $('#v-life').querySelectorAll('[data-rk]').forEach(el=>el.addEventListener('change',()=>{S.risk[el.dataset.rk]=el.checked;save();renderLife()}));
+}
+
+/* ---------- PROGRESS tab ---------- */
+function lineChart(pts,unit){
+  if(pts.length<2)return`<p class="small muted">Grafik için en az iki seans gerekiyor.</p>`;
+  const W=640,H=230,L=48,R=16,T=16,B=34;const max=Math.max(...pts.map(p=>p.v));const top=Math.ceil(max*1.1/50)*50;
+  const x=i=>L+(W-L-R)*i/(pts.length-1),y=v=>T+(H-T-B)*(1-v/top);
+  let g='';for(let k=0;k<=4;k++){const v=top*k/4;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L-8}" y="${y(v)+4}" text-anchor="end">${Math.round(v)}</text>`}
+  const step=Math.max(1,Math.ceil(pts.length/6));
+  const xl=pts.map((p,i)=>i%step===0||i===pts.length-1?`<text x="${x(i)}" y="${H-10}" text-anchor="middle">${i+1}</text>`:'').join('');
+  const path=pts.map((p,i)=>`${i?'L':'M'}${x(i).toFixed(1)} ${y(p.v).toFixed(1)}`).join('');
+  const area=`${path}L${x(pts.length-1)} ${y(0)}L${x(0)} ${y(0)}Z`;
+  const lastI=pts.length-1;
+  return`<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Seanslara göre eşik süre">${g}<path d="${area}" fill="var(--accent)" opacity=".1"/><path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5"/>${pts.map((p,i)=>`<circle cx="${x(i)}" cy="${y(p.v)}" r="${i===lastI?5:3}" fill="var(--accent)"/>`).join('')}<text x="${x(lastI)}" y="${y(pts[lastI].v)-10}" text-anchor="end" style="fill:var(--ink)">${pts[lastI].v} ${unit}</text>${xl}<text x="${(W+L)/2}" y="${H}" text-anchor="middle">seans</text></svg></div>`;
+}
+let confirmReset=false;
+function renderProgress(){
+  const sp=S.sessions.filter(s=>s.type==='speed'),rs=S.sessions.filter(s=>s.type==='reason');
+  const first=sp[0],last=sp[sp.length-1];
+  const change=first&&last&&sp.length>1?Math.round(100*(first.thr-last.thr)/first.thr):null;
+  $('#v-progress').innerHTML=`
+    <div style="display:grid;gap:8px"><span class="eyebrow">İlerleme</span><h1>Zaman içindeki değişim</h1></div>
+    <div class="panel"><div class="row" style="justify-content:space-between"><h2>Bilişsel ölçüm</h2>${lastAssess()?`<span class="chip ${lastAssess().date<daysAgo(90)?'warn':''}"><span class="dot"></span>Son: ${fmtDate(lastAssess().date)}</span>`:'<span class="chip warn"><span class="dot"></span>Henüz yok</span>'}</div>
+      <p class="small muted">Bellek, işlem hızı, çalışma belleği ve ketlemeyi ölçen 10 dakikalık test. Üç ayda bir tekrarlayın.</p>
+      <div class="row"><button class="btn accent" data-act="assess">${lastAssess()?'Ölçümü tekrarla':'Ölçüme başla'}</button><button class="btn ghost" data-go="test">Ölçüm ayrıntıları</button></div></div>
+    <div class="panel"><div class="row" style="justify-content:space-between"><h2>Çift Odak eşik süresi</h2>${change!==null?`<span class="chip ${change>0?'good':''}">${change>0?'%'+change+' daha hızlı':'ilk seansa göre değişim yok'}</span>`:''}</div>
+      <p class="small muted">Milisaniye; düşük değer daha iyi.</p>${lineChart(sp.map(s=>({v:s.thr})),'ms')}</div>
+    <div class="panel"><h2>Ölçümler</h2>${S.assessments.length?`<div class="tbl"><table><thead><tr><th>Tarih</th><th>Liste</th><th>Anlık</th><th>Gecikmeli</th><th>SDMT</th><th>Dizi i/g</th><th>Stroop</th></tr></thead><tbody>
+      ${S.assessments.slice().reverse().map(a=>`<tr><td>${fmtDate(a.date)}</td><td>${LIST_NAMES[a.list??0]}</td><td>${a.immediate}/10</td><td>${a.delayed}/10</td><td>${a.sdmt.correct}</td><td>${a.dsf}/${a.dsb}</td><td>${a.stroop.correct}</td></tr>`).join('')}</tbody></table></div>`:'<p class="small muted">Henüz ölçüm yok.</p>'}</div>
+    <div class="panel"><h2>Dizi Bulmaca</h2>${rs.length?`<div class="tbl"><table><thead><tr><th>Tarih</th><th>Seviye</th><th>Skor</th></tr></thead><tbody>${rs.slice(-10).reverse().map(s=>`<tr><td>${fmtDate(s.date)}</td><td>${s.level}</td><td>${s.score}/10</td></tr>`).join('')}</tbody></table></div>`:'<p class="small muted">Henüz seans yok.</p>'}</div>
+    <div class="panel"><h2>Hafıza Sarayı</h2>${S.sessions.some(s=>s.type==='memory')?`<div class="tbl"><table><thead><tr><th>Tarih</th><th>Teknik</th><th>Seviye</th><th>Skor</th></tr></thead><tbody>${S.sessions.filter(s=>s.type==='memory').slice(-10).reverse().map(s=>`<tr><td>${fmtDate(s.date)}</td><td>${TECH[s.tech].name}</td><td>${s.level}</td><td>${s.score}/${s.n}</td></tr>`).join('')}</tbody></table></div>`:'<p class="small muted">Henüz seans yok.</p>'}</div>
+    <div class="panel"><h2>Yol Ustası</h2>${S.sessions.some(s=>s.type==='game')?`<div class="tbl"><table><thead><tr><th>Tarih</th><th>Seviye</th><th>Puan</th><th>Yolda</th><th>Hedef</th><th>Tepki</th><th>Yanlış</th></tr></thead><tbody>${S.sessions.filter(s=>s.type==='game').slice(-10).reverse().map(s=>`<tr><td>${fmtDate(s.date)}</td><td>${s.lv}</td><td>${s.score}</td><td>${s.drive}%</td><td>${s.hit}%</td><td>${s.rt?s.rt+' ms':'–'}</td><td>${s.fa}</td></tr>`).join('')}</tbody></table></div>`:'<p class="small muted">Henüz oyun yok.</p>'}</div>
+    <div class="panel"><h2>Hareket rutini</h2><p>${(()=>{const m=S.sessions.filter(s=>s.type==='move');return m.length?`Toplam <span class="mono">${m.length}</span> rutin, <span class="mono">${m.reduce((a,b)=>a+b.min,0)}</span> dakika. Son: ${fmtDate(m[m.length-1].date)}.`:'<span class="small muted">Henüz rutin yok.</span>'})()}</p></div>
+    <div class="panel"><h2>Veriler</h2><p class="small muted">Tüm veriler yalnızca bu tarayıcıda saklanır. Başka bir cihazda görünmez.</p>
+      <div class="confirm" id="rz">${confirmReset?`<span class="small">Tüm profil ve geçmiş silinecek. Emin misiniz?</span><button class="btn danger" id="rz-yes">Evet, sil</button><button class="btn ghost" id="rz-no">Vazgeç</button>`:`<button class="btn ghost" id="rz-ask">Profili ve verileri sıfırla</button>`}</div></div>`;
+  const a=$('#rz-ask');if(a)a.onclick=()=>{confirmReset=true;renderProgress()};
+  const n=$('#rz-no');if(n)n.onclick=()=>{confirmReset=false;renderProgress()};
+  const y=$('#rz-yes');if(y)y.onclick=()=>{S=blank();save();confirmReset=false;tab='today';render()};
+}
+
+/* ---------- boot ---------- */
+try{const t=sessionStorage.getItem('bb-tab');if(t)tab=t}catch(e){}
+render();
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').catch(error=>console.error('Mind & Motion service worker kaydedilemedi:',error));
+  });
+}
+</script>
+
+</body></html>
